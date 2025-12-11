@@ -134,6 +134,7 @@ void UserManager::AddUser()
         string newPassword = Utils::GeneratePassword(lastName, dob);
 
         users[userCount].setPassword(newPassword.c_str());
+        cout << "Them nguoi dung thanh cong!" << "\n";
 
         cout << "MAT KHAU: " << newPassword << "\n";
         users[userCount].Show();
@@ -158,11 +159,41 @@ void UserManager::ShowAllUsers() const
         return;
     }
 
+    // Thiết lập độ rộng cột cho bảng
+    const int ID_WIDTH = 10;
+    const int NAME_WIDTH = 30;
+    const int DATE_WIDTH = 12;
+    const int PHONE_WIDTH = 12;
+    const int EMAIL_WIDTH = 30;
+    const int TOTAL_WIDTH = ID_WIDTH + NAME_WIDTH + DATE_WIDTH + PHONE_WIDTH + EMAIL_WIDTH;
+
+    cout << "\n========== DANH SACH TAT CA NGUOI DUNG (" << userCount << " nguoi) ==========\n";
+
+    // In tiêu đề bảng
+    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID" << " "
+         << left << setw(NAME_WIDTH) << "Ten" << " "
+         << left << setw(DATE_WIDTH) << "Ngay sinh" << " "
+         << left << setw(PHONE_WIDTH) << "So dien thoai" << " "
+         << left << setw(EMAIL_WIDTH) << "Email"
+         << endl;
+
+    // In dòng phân cách
+    cout << setfill('-') << setw(TOTAL_WIDTH + 4) << "" << setfill(' ') << endl;  // +4 for the 4 spaces
+
+    // Duyệt và in dữ liệu
     for (int i = 0; i < userCount; ++i)
     {
-        cout << "Nguoi dung thu " << i + 1 << ":\n";
-        users[i].Show();
+        const Person& user = users[i];
+        cout << left << setw(ID_WIDTH) << user.getID() << " "
+             << left << setw(NAME_WIDTH) << user.getName() << " "
+             << left << setw(DATE_WIDTH) << user.getDate() << " "
+             << left << setw(PHONE_WIDTH) << user.getPhone() << " "
+             << left << setw(EMAIL_WIDTH) << user.getEmail()
+             << endl;
     }
+
+    // In dòng kết thúc
+    cout << setfill('-') << setw(TOTAL_WIDTH + 4) << "" << setfill(' ') << endl;
 }
 
 void UserManager::DeleteUserByID(int id)

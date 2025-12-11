@@ -37,6 +37,7 @@ Book::Book(int id, const char* t, const char* a, const char* c, int y, int q, bo
     pubYear = y;
     quantity = q;
     isBorrowed = b;
+    totalQuantity = q;
 }
 
 Book::~Book() {}

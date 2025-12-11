@@ -7,8 +7,7 @@
 #include "StatisticsManager.h"
 #include "Utils.h"
 #include "User.h"
-#include <iomanip> 
-#include <vector>
+#include <iomanip>
 
 using namespace std;
 

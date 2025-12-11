@@ -1,16 +1,233 @@
 #include "BookManager.h"
 
+using namespace std;
+
+// Constructor: Gọi hàm load để cập nhật nextAvailableID
+BookManager::BookManager() 
+{
+    // Giả định: books là mảng cố định (fixed size array)
+    bookCount = 0;
+    // Giả định: nextAvailableID được khởi tạo trong BookManager.h (ví dụ: nextAvailableID = 1;)
+    Utils::CopyStringManual(userFilePath, "book.txt", sizeof(userFilePath));
+    LoadBooksFromFile(); // ⬅️ Tải dữ liệu và cập nhật ID lớn nhất
+}
+
+// Hàm tải sách từ file và cập nhật ID lớn nhất
+void BookManager::LoadBooksFromFile()
+{
+    ifstream inFile(userFilePath);
+    if (!inFile.is_open())
+    {
+        // Nếu file không tồn tại, reset bookCount và bắt đầu ID từ 1
+        bookCount = 0;
+        this->nextAvailableID = 1; 
+        return;
+    }
+
+    bookCount = 0;
+    int maxID = 0; // Biến tìm ID lớn nhất
+    char line[512];
+    
+    // Bỏ qua dòng tiêu đề nếu cần thiết
+    // inFile.getline(line, sizeof(line));
+
+    while (inFile.getline(line, sizeof(line)))
+    {
+        if (line[0] == '\0')
+            continue;
+
+        char fields[7][200];
+        int fld = 0, pos = 0;
+        
+        // Logic phân tích chuỗi thủ công (Manual Split)
+        for (int i = 0; line[i] != '\0'; ++i)
+        {
+            if (line[i] == ',')
+            {
+                fields[fld][pos] = '\0';
+                fld++;
+                pos = 0;
+            }
+            else
+            {
+                if (pos < 199)
+                    fields[fld][pos++] = line[i];
+            }
+        }
+        fields[fld][pos] = '\0'; 
+
+        if (fld < 6) // Cần ít nhất 7 trường (ID, Title, Author, Category, Year, Qty, Borrowed)
+            continue; 
+
+        // Chuyển đổi từ chuỗi sang số
+        int id = atoi(fields[0]);
+        int pubYear = atoi(fields[4]);
+        int quantity = atoi(fields[5]);
+        bool borrowed = (fields[6][0] == '1');
+
+        // Tạo đối tượng Book và thêm vào mảng
+        books[bookCount] = Book(id, fields[1], fields[2], fields[3], pubYear, quantity, borrowed);
+        
+        // CẬP NHẬT ID LỚN NHẤT
+        if (id > maxID) {
+            maxID = id;
+        }
+
+        bookCount++;
+        if (bookCount >= 100) // Giả định kích thước mảng tối đa là 100
+            break;
+    }
+
+    inFile.close();
+    
+    // 🌟 KHẮC PHỤC LỖI ID TIẾP THEO 🌟
+    this->nextAvailableID = maxID + 1; // Đảm bảo ID tiếp theo là maxID + 1 (ví dụ: 140)
+}
+
+// Hàm lưu sách vào file
+void BookManager::SaveBooksToFile() const
+{
+    ofstream outFile(userFilePath);
+    if (!outFile.is_open()) return;
+    
+    // Ghi tiêu đề nếu cần
+    // outFile << "ID,Title,Author,Category,PubYear,Quantity,Borrowed\n";
+    
+    for (int i = 0; i < bookCount; ++i)
+    {
+        outFile << books[i].getID() << ","
+                << books[i].getTitle() << ","
+                << books[i].getAuthor() << ","
+                << books[i].getCategory() << ","
+                << books[i].getPubYear() << ","
+                << books[i].getQuantity() << ","
+                << (books[i].getBorrowed() ? 1 : 0);
+        if (i < bookCount - 1)
+            outFile << "\n";
+    }
+    outFile.close();
+}
+
+// Hàm tạo ID sách tiếp theo
 string BookManager::GenerateNextBookID()
 {
-    int nextIDNumber = bookCount + 1;
+    // 1. Lấy ID hiện tại (ví dụ: 140)
     int newID = nextAvailableID;
     
-    stringstream ss;
-    ss << setfill('0') << newID;
+    // 2. Tăng ID lên cho lần gọi tiếp theo (141)
     nextAvailableID++;
     
-    return ss.str();
-}    
+    // 3. Trả về ID dưới dạng string
+    return to_string(newID);
+} 
+
+// Hàm thêm sách
+void BookManager::AddBook()
+{
+    char choice;
+    do
+    {
+        cout << "\n--- THEM SACH MOI ---\n";
+        string newIDStr = GenerateNextBookID();
+        int id = Utils::StringToIntManual(newIDStr.c_str());
+        
+        cout << "ID sach tu dong: " << newIDStr << "\n";
+        
+        // Bỏ qua ký tự '\n' còn sót lại (nếu cần thiết)
+        
+        // Đặt ID và nhận thông tin từ người dùng
+        books[bookCount].setID(id);
+        books[bookCount].InputBook();
+        books[bookCount].setBorrowed(false); 
+        bookCount++;
+
+        SaveBooksToFile();
+
+        cout << "Ban co muon them sach khac khong? (Y/N): ";
+        cin >> choice;
+        cin.ignore(100, '\n');
+        if (choice >= 'a' && choice <= 'z')
+            choice -= 32;
+
+    } while (choice == 'Y');
+}
+
+// Hàm hiển thị tất cả sách (Đã giữ lại logic bảng của bạn)
+void BookManager::ShowAllBooks() const
+{
+    if (bookCount == 0)
+    {
+        cout << "Chua co sach nao!\n";
+        return;
+    }
+
+    // Thiết lập độ rộng cột cho bảng
+    const int ID_WIDTH = 8;
+    const int TITLE_WIDTH = 45;
+    const int AUTHOR_WIDTH = 30;
+    // const int PUBLISHER_WIDTH = 30; // Biến này không được dùng trong output
+    const int YEAR_WIDTH = 10;
+    const int QUANTITY_WIDTH = 10;
+    // const int PRICE_WIDTH = 15; // Biến này không được dùng trong output
+    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+
+    cout << "\n========== DANH SACH TAT CA SACH (" << bookCount << " cuon) ==========\n";
+
+    // --- 1. In Tiêu đề Bảng ---
+    cout << setfill(' '); 
+
+    cout << left << setw(ID_WIDTH) << "ID"
+         << left << setw(TITLE_WIDTH) << "Ten sach"
+         << left << setw(AUTHOR_WIDTH) << "Tac gia"
+         << left << setw(YEAR_WIDTH) << "Nam XB"
+         << left << setw(QUANTITY_WIDTH) << "So luong"
+         << endl;
+
+    // --- 2. In Dòng Phân cách ---
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+
+    // --- 3. Duyệt và In Dữ liệu ---
+    for (int i = 0; i < bookCount; ++i)
+    {
+        const Book& book = books[i];
+
+        // In từng cột (Giả định class Book có các hàm getter tương ứng)
+        cout << left << setw(ID_WIDTH) << book.getID()
+             << left << setw(TITLE_WIDTH) << book.getTitle()
+             << left << setw(AUTHOR_WIDTH) << book.getAuthor()
+             << left << setw(YEAR_WIDTH) << book.getPubYear() // Giả định getPubYear() là đúng
+             << left << setw(QUANTITY_WIDTH) << book.getQuantity()
+             << endl;
+    }
+
+    // --- 4. In Dòng Kết thúc ---
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+}
+
+// Hàm tìm sách theo ID (Non-const - Dùng để Update)
+Book* BookManager::GetBookByID(int id)
+{
+    for (int i = 0; i < bookCount; ++i)
+    {
+        if (books[i].getID() == id)
+            return &books[i]; 
+    }
+    return nullptr;
+}
+
+// Hàm tìm sách theo ID (Const - Dùng để Show/Read Only)
+const Book* BookManager::GetBookByID(int id) const
+{
+    for (int i = 0; i < bookCount; ++i)
+    {
+        if (books[i].getID() == id)
+            return &books[i];
+    }
+    return nullptr;
+}
+
+
+// CÁC HÀM KHÁC (Được giữ nguyên)
 
 void BookManager::ShowStockReport() const
 {
@@ -38,34 +255,103 @@ void BookManager::SearchBookByAuthor(const char* author) const
     cout << "\n--- KET QUA TIM KIEM TAC GIA: " << author << " ---\n";
     int foundCount = 0;
     
+    // Thiết lập độ rộng cột cho bảng
+    const int ID_WIDTH = 8;
+    const int TITLE_WIDTH = 45;
+    const int AUTHOR_WIDTH = 30;
+    const int CATEGORY_WIDTH = 20;
+    const int YEAR_WIDTH = 10;
+    const int QUANTITY_WIDTH = 10;
+    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+
+    // In tiêu đề bảng
+    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
+         << left << setw(TITLE_WIDTH) << "Ten sach"
+         << left << setw(AUTHOR_WIDTH) << "Tac gia"
+         << left << setw(CATEGORY_WIDTH) << "The loai"
+         << left << setw(YEAR_WIDTH) << "Nam XB"
+         << left << setw(QUANTITY_WIDTH) << "So luong"
+         << endl;
+
+    // In dòng phân cách
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+
     for (int i = 0; i < bookCount; ++i) {
         
         if (Utils::FindSubstringManual(books[i].getAuthor(), author)) 
         {
-            books[i].Show();
+            const Book& book = books[i];
+            cout << left << setw(ID_WIDTH) << book.getID()
+                 << left << setw(TITLE_WIDTH) << book.getTitle()
+                 << left << setw(AUTHOR_WIDTH) << book.getAuthor()
+                 << left << setw(CATEGORY_WIDTH) << book.getCategory()
+                 << left << setw(YEAR_WIDTH) << book.getPubYear()
+                 << left << setw(QUANTITY_WIDTH) << book.getQuantity()
+                 << endl;
             foundCount++;
         }
     }
     
+    // In dòng kết thúc
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    
     if (foundCount == 0) {
         cout << "Khong tim thay sach nao cua tac gia '" << author << "'.\n";
+    } else {
+        cout << "Tim thay " << foundCount << " cuon sach.\n";
     }
-}
-Book* BookManager::GetBookByID(int id)
-{
-    for (int i = 0; i < bookCount; ++i)
-    {
-        if (books[i].getID() == id)
-            return &books[i]; 
-    }
-    return nullptr;
 }
 
-BookManager::BookManager() 
+void BookManager::SearchBookByCategory(const char* category) const
 {
-    bookCount = 0;
-    Utils::CopyStringManual(userFilePath, "book.txt", sizeof(userFilePath));
-    LoadBooksFromFile();
+    cout << "\n--- KET QUA TIM KIEM THE LOAI: " << category << " ---\n";
+    int foundCount = 0;
+    
+    // Thiết lập độ rộng cột cho bảng
+    const int ID_WIDTH = 8;
+    const int TITLE_WIDTH = 45;
+    const int AUTHOR_WIDTH = 30;
+    const int CATEGORY_WIDTH = 20;
+    const int YEAR_WIDTH = 10;
+    const int QUANTITY_WIDTH = 10;
+    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+
+    // In tiêu đề bảng
+    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
+         << left << setw(TITLE_WIDTH) << "Ten sach"
+         << left << setw(AUTHOR_WIDTH) << "Tac gia"
+         << left << setw(CATEGORY_WIDTH) << "The loai"
+         << left << setw(YEAR_WIDTH) << "Nam XB"
+         << left << setw(QUANTITY_WIDTH) << "So luong"
+         << endl;
+
+    // In dòng phân cách
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+
+    for (int i = 0; i < bookCount; ++i) {
+        
+        if (containsIgnoreCase(books[i].getCategory(), category)) 
+        {
+            const Book& book = books[i];
+            cout << left << setw(ID_WIDTH) << book.getID()
+                 << left << setw(TITLE_WIDTH) << book.getTitle()
+                 << left << setw(AUTHOR_WIDTH) << book.getAuthor()
+                 << left << setw(CATEGORY_WIDTH) << book.getCategory()
+                 << left << setw(YEAR_WIDTH) << book.getPubYear()
+                 << left << setw(QUANTITY_WIDTH) << book.getQuantity()
+                 << endl;
+            foundCount++;
+        }
+    }
+    
+    // In dòng kết thúc
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    
+    if (foundCount == 0) {
+        cout << "Khong tim thay sach nao cua the loai '" << category << "'.\n";
+    } else {
+        cout << "Tim thay " << foundCount << " cuon sach.\n";
+    }
 }
 
 bool BookManager::IsBookIDExist(int id)
@@ -76,169 +362,7 @@ bool BookManager::IsBookIDExist(int id)
     return false;
 }
 
-void BookManager::LoadBooksFromFile()
-{
-    ifstream inFile(userFilePath);
-    if (!inFile)
-        return;
-
-    bookCount = 0;
-    char line[512];
-    while (inFile.getline(line, sizeof(line)))
-    {
-        if (line[0] == '\0')
-            continue;
-
-        char fields[7][200];
-        int fld = 0, pos = 0;
-        for (int i = 0; line[i] != '\0'; ++i)
-        {
-            if (line[i] == ',')
-            {
-                fields[fld][pos] = '\0';
-                fld++;
-                pos = 0;
-            }
-            else
-            {
-                if (pos < 199)
-                    fields[fld][pos++] = line[i];
-            }
-        }
-        fields[fld][pos] = '\0'; 
-
-        if (fld < 6)
-            continue; 
-
-        int id = atoi(fields[0]);
-        int pubYear = atoi(fields[4]);
-        int quantity = atoi(fields[5]);
-        bool borrowed = (fields[6][0] == '1');
-
-        books[bookCount] = Book(id, fields[1], fields[2], fields[3], pubYear, quantity, borrowed);
-        bookCount++;
-        if (bookCount >= 100)
-            break;
-    }
-
-    inFile.close();
-}
-
-void BookManager::SaveBooksToFile() const
-{
-    ofstream outFile(userFilePath);
-    for (int i = 0; i < bookCount; ++i)
-    {
-        outFile << books[i].getID() << ","
-                << books[i].getTitle() << ","
-                << books[i].getAuthor() << ","
-                << books[i].getCategory() << ","
-                << books[i].getPubYear() << ","
-                << books[i].getQuantity() << ","
-                << (books[i].getBorrowed() ? 1 : 0);
-        if (i < bookCount - 1)
-            outFile << "\n";
-    }
-    outFile.close();
-}
-
-void BookManager::AddBook()
-{
-    char choice;
-    do
-    {
-        cout << "\n--- THEM SACH MOI ---\n";
-        string newIDStr = GenerateNextBookID();
-        int id = Utils::StringToIntManual(newIDStr.c_str());
-        
-        cout << "ID sach tu dong: " << newIDStr << "\n";
-        
-        cin.ignore();
-        books[bookCount].setID(id);
-        books[bookCount].InputBook();
-        books[bookCount].setBorrowed(false); 
-        bookCount++;
-
-        SaveBooksToFile();
-
-        cout << "Ban co muon them sach khac khong? (Y/N): ";
-        cin >> choice;
-        cin.ignore(100, '\n');
-        if (choice >= 'a' && choice <= 'z')
-            choice -= 32;
-
-    } while (choice == 'Y');
-}
-
-// void BookManager::ShowAllBooks() const
-// {
-//     if (bookCount == 0)
-//     {
-//         cout << "Chua co sach nao!\n";
-//         return;
-//     }
-
-//     for (int i = 0; i < bookCount; ++i)
-//     {
-//         cout << "\nSach thu " << i + 1 << ":\n";
-//         books[i].Show();
-//     }
-// }
-void BookManager::ShowAllBooks() const
-{
-    if (bookCount == 0)
-    {
-        cout << "Chua co sach nao!\n";
-        return;
-    }
-
-    // Thiết lập độ rộng cột cho bảng
-    const int ID_WIDTH = 8;
-    const int TITLE_WIDTH = 45;
-    const int AUTHOR_WIDTH = 30;
-    const int PUBLISHER_WIDTH = 30;
-    const int YEAR_WIDTH = 10;
-    const int QUANTITY_WIDTH = 10;
-    const int PRICE_WIDTH = 15;
-    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + PUBLISHER_WIDTH  + QUANTITY_WIDTH  + 5;
-
-    cout << "\n========== DANH SACH TAT CA SACH (" << bookCount << " cuon) ==========\n";
-
-    // --- 1. In Tiêu đề Bảng ---
-    cout << setfill(' '); // Đặt ký tự lấp đầy là khoảng trắng
-
-    cout << left << setw(ID_WIDTH) << "ID"
-         << left << setw(TITLE_WIDTH) << "Ten sach"
-         << left << setw(AUTHOR_WIDTH) << "Tac gia"
-         << left << setw(PUBLISHER_WIDTH) << "NXB"
-        //  << left << setw(YEAR_WIDTH) << "Nam XB"
-         << left << setw(QUANTITY_WIDTH) << "So luong"
-        //  << right << setw(PRICE_WIDTH) << "Gia"
-         << endl;
-
-    // --- 2. In Dòng Phân cách ---
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
-
-    // --- 3. Duyệt và In Dữ liệu ---
-    for (int i = 0; i < bookCount; ++i)
-    {
-        // Lấy thông tin sách
-        const Book& book = books[i];
-
-        // In từng cột (Giả định class Book có các hàm getter tương ứng)
-        cout << left << setw(ID_WIDTH) << book.getID()
-             << left << setw(TITLE_WIDTH) << book.getTitle()
-             << left << setw(AUTHOR_WIDTH) << book.getAuthor()
-             << left << setw(YEAR_WIDTH) << book.getYear()
-             << left << setw(QUANTITY_WIDTH) << book.getQuantity()
-             << endl;
-    }
-
-    // --- 4. In Dòng Kết thúc ---
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
-}
-
-char BookManager::toLower(char c) {
+char BookManager::toLower(char c) const {
     if (c >= 'A' && c <= 'Z') return c + 32;
     return c;
 }
@@ -259,11 +383,11 @@ void BookManager::trim(char* str) {
     str[j] = '\0';
 }
 
-bool BookManager::containsIgnoreCase(const char* text, const char* keyword) {
+bool BookManager::containsIgnoreCase(const char* text, const char* keyword) const {
     for (int i = 0; text[i] != '\0'; ++i) {
         int j = 0;
         while (keyword[j] != '\0' && text[i + j] != '\0' &&
-                toLower(text[i + j]) == toLower(keyword[j])) {
+               toLower(text[i + j]) == toLower(keyword[j])) {
             j++;
         }
         if (keyword[j] == '\0') return true; 
@@ -278,17 +402,53 @@ void BookManager::SearchBookByTitle() {
     cin.getline(keyword, 100);
     trim(keyword);
 
-    bool found = false;
+    cout << "\n--- KET QUA TIM KIEM TEN SACH: " << keyword << " ---\n";
+    int foundCount = 0;
+
+    // Thiết lập độ rộng cột cho bảng
+    const int ID_WIDTH = 8;
+    const int TITLE_WIDTH = 45;
+    const int AUTHOR_WIDTH = 30;
+    const int CATEGORY_WIDTH = 20;
+    const int YEAR_WIDTH = 10;
+    const int QUANTITY_WIDTH = 10;
+    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+
+    // In tiêu đề bảng
+    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
+         << left << setw(TITLE_WIDTH) << "Ten sach"
+         << left << setw(AUTHOR_WIDTH) << "Tac gia"
+         << left << setw(CATEGORY_WIDTH) << "The loai"
+         << left << setw(YEAR_WIDTH) << "Nam XB"
+         << left << setw(QUANTITY_WIDTH) << "So luong"
+         << endl;
+
+    // In dòng phân cách
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+
     for (int i = 0; i < bookCount; ++i) {
         const char* title = books[i].getTitle();
         if (containsIgnoreCase(title, keyword)) {
-            cout << "\n==> Tim thay sach:\n";
-            books[i].Show();
-            found = true;
+            const Book& book = books[i];
+            cout << left << setw(ID_WIDTH) << book.getID()
+                 << left << setw(TITLE_WIDTH) << book.getTitle()
+                 << left << setw(AUTHOR_WIDTH) << book.getAuthor()
+                 << left << setw(CATEGORY_WIDTH) << book.getCategory()
+                 << left << setw(YEAR_WIDTH) << book.getPubYear()
+                 << left << setw(QUANTITY_WIDTH) << book.getQuantity()
+                 << endl;
+            foundCount++;
         }
     }
 
-    if (!found) cout << "Khong tim thay sach phu hop.\n";
+    // In dòng kết thúc
+    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+
+    if (!foundCount) {
+        cout << "Khong tim thay sach phu hop.\n";
+    } else {
+        cout << "Tim thay " << foundCount << " cuon sach.\n";
+    }
 }
 
 void BookManager::DeleteBookByID(int id)
@@ -379,13 +539,9 @@ void BookManager::ShowStockReportPerBook() const
     cout << "=============================================================\n";
 }
 
-
-// Trong BookManager.cpp
-// Trong BookManager.cpp
-
 void BookManager::UpdateBookByID(int id)
 {
-    // Giả định hàm GetBookByID non-const đã có và trả về Book*
+    // Sử dụng hàm non-const GetBookByID để lấy con trỏ có thể thay đổi
     Book* book = GetBookByID(id); 
     if (!book) {
         cout << "Khong tim thay sach co ID: " << id << "\n";
@@ -401,6 +557,7 @@ void BookManager::UpdateBookByID(int id)
     
     // 1. Cập nhật Tên sách (Title)
     cout << "Nhap Ten sach moi: ";
+    cin.ignore(); // Xử lý ký tự newline còn sót
     cin.getline(input, sizeof(input));
     if (input[0] != '\0') {
         book->setTitle(input);
@@ -413,13 +570,13 @@ void BookManager::UpdateBookByID(int id)
         book->setAuthor(input);
     }
     
-  
+    // 3. Cập nhật Năm xuất bản
     cout << "Nhap Nam xuat ban moi: ";
     cin.getline(input, sizeof(input));
     if (input[0] != '\0') {
         int newYear = Utils::CharArrayToIntManual(input);
         if (newYear > 0) { 
-            book->setYear(newYear); 
+            book->setPubYear(newYear); // Sửa: Giả định hàm setPubYear() có sẵn
         } else {
             cout << "Canh bao: Nam nhap vao khong hop le hoac <= 0. Giu nguyen gia tri cu.\n";
         }
@@ -432,17 +589,8 @@ void BookManager::UpdateBookByID(int id)
         book->setCategory(input);
     }
 
-   
+    // (Bạn có thể cần thêm cập nhật Quantity/TotalQuantity)
+    
     cout << "\nCap nhat thong tin sach thanh cong!\n";
     SaveBooksToFile(); 
-}
-
-const Book* BookManager::GetBookByID(int id) const
-{
-    for (int i = 0; i < bookCount; ++i)
-    {
-        if (books[i].getID() == id)
-            return &books[i];
-    }
-    return nullptr;
 }

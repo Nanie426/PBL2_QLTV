@@ -1,11 +1,4 @@
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 29/11/2025 15:01:04
-ID nguoi dung: 2012
-Ten nguoi dung: Le Minh Hoang
-ID sach: 139
-Ten sach: Nhat ky cua Chau
-Ngay muon: 29/11/2025
-----------------------------------------
+
 
 === THONG TIN MUON SACH ===
 Thoi gian ghi nhan: 29/11/2025 15:19:41

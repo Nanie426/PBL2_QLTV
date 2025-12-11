@@ -2,8 +2,11 @@
 #include <string>
 #include <ctime>
 
+using namespace std;
+
 class Utils {
 public:
+    static const int MAX_STREAM_SIZE_MANUAL = 100;
     static int StringToIntManual(const char* str);
     static int FindSubstringManual(const char* haystack, const char* needle);
     static void CopyStringManual(char* dest, const char* src, size_t dest_size);
@@ -21,13 +24,13 @@ public:
     static const int daysInMonth[13];
     static bool AskReturnToMenu();
 
-    static tm ParseDate(const std::string& dateStr);
-    static std::string FormatDate(const tm& timeinfo);
+    static tm ParseDate(const  string& dateStr);
+    static  string FormatDate(const tm& timeinfo);
     static tm AddDays(const tm& date, int days);
     static int CompareDates(const tm& date1, const tm& date2);
 
     static bool IsLeap(int year);
     static long long GetTotalDays(const char* date);
 
-    static std::string GeneratePassword(const std::string& lastName, const std::string& dob);
+    static  string GeneratePassword(const  string& lastName, const  string& dob);
 };

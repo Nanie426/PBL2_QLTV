@@ -12,5 +12,4 @@
 136,Hai dua tre,Thach Lam,truyen ngan,1938,1,0
 138,Mua lac,Duong Thu Huong,tieu thuyet,1992,1,0
 139,Nhat ky cua Chau,Chau,Nhat ky,1975,2,0
-32762,Hoa co lau,CHau,truyen dai,2006,10,0
-32762,Toi thay hoa vang tren co xanh,Nguyen Hong,Truyen dai,1990,5,0
+140,Nhat ky cua Chau,Ngoc Chau,Tieu thuyet,2006,18,0

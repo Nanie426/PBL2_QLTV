@@ -28,6 +28,18 @@ struct BorrowRecordData
     string timeStamp;
 };
 
+struct TransactionRecord
+{
+    int userID;
+    string userName;
+    int bookID;
+    string bookTitle;
+    string borrowDate;
+    string returnDate;
+    bool isReturned;
+    string timeStamp;
+};
+
 class BorrowManager
 {
 private:
@@ -38,6 +50,8 @@ private:
     void LogReturnRecord(int userID, const string &userName,
                          int bookID, const string &bookTitle,
                          const string &returnDate);
+    
+    vector<TransactionRecord> LoadAllTransactions();
     
 public:
     void HandleBorrowBook(UserManager& um, BookManager& bm);

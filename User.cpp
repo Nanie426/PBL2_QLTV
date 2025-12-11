@@ -1,4 +1,5 @@
 #include "User.h"
+#include "Utils.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -8,6 +9,7 @@
 using namespace std;
 
 #define MAX_BORROWED_BOOKS 5
+
 const int MAX_STREAM_SIZE_MANUAL = 100;
 
 int User::getCurrentBorrowedCount() const {
@@ -19,7 +21,10 @@ int User::getCurrentBorrowedCount() const {
     }
     return count;
 }
-
+const vector<BorrowedItem>& User::getTransactionHistory() const
+{
+    return transactionHistory; 
+}
 int User::FindActiveBorrowIndex(int bookID) const
 {
     for (size_t i = 0; i < transactionHistory.size(); ++i)
@@ -324,7 +329,8 @@ void User::Menu(UserManager &manager, BookManager &bm)
                 cout << "\n--- MENU TIM KIEM SACH ---\n";
                 cout << "1. Theo ten\n";
                 cout << "2. Theo tac gia\n";
-                cout << "3. Theo ID\n";
+                cout << "3. Theo the loai\n";
+                cout << "4. Theo ID\n";
                 cout << "0. Quay lai\n";
                 cout << "Chon: ";
                 cin.getline(subInput, sizeof(subInput));
@@ -341,6 +347,13 @@ void User::Menu(UserManager &manager, BookManager &bm)
                 }
                 else if (subChoice == 3)
                 {
+                    char category[100];
+                    cout << "Nhap the loai: ";
+                    cin.getline(category, sizeof(category));
+                    bm.SearchBookByCategory(category);
+                }
+                else if (subChoice == 4)
+                {
                     char idStr[20];
                     int bookID;
                     cout << "Nhap ID sach: ";
@@ -355,23 +368,23 @@ void User::Menu(UserManager &manager, BookManager &bm)
 
             } while (subChoice != 0);
 
-            AskReturnToMenu();
+            Utils::AskReturnToMenu();
             break;
         }
 
         case 2:
             bm.ShowAllBooks();
-            AskReturnToMenu();
+            Utils::AskReturnToMenu();
             break;
 
         case 3:
             ShowTransactionHistory(bm);
-            AskReturnToMenu();
+            Utils::AskReturnToMenu();
             break;
 
         case 4:
             Show();
-            AskReturnToMenu();
+            Utils::AskReturnToMenu();
             break;
 
         case 5:
@@ -389,13 +402,13 @@ void User::Menu(UserManager &manager, BookManager &bm)
             else
                 cout << "ID khong dung.\n";
 
-            AskReturnToMenu();
+            Utils::AskReturnToMenu();
             break;
         }
 
         case 6:
             ChangePassword();
-            AskReturnToMenu();
+            Utils::AskReturnToMenu();
             break;
 
         case 0:

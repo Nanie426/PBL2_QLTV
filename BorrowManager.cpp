@@ -1,89 +1,6 @@
 #include "BorrowManager.h"
 
 
-// void BorrowManager::ShowActiveAndOverdueBorrows(UserManager& userManager, BookManager& bookManager) {
-//     cout << "\n=== SACH MUON QUA HAN ===\n";
-
-//     const Person* allUsers = userManager.GetAllUsers();
-//     int userCount = userManager.GetUserCount();
-    
-//     if (userCount == 0) {
-//         cout << "Khong co doc gia nao trong he thong.\n";
-//         return;
-//     }
-
-//     const int DEFAULT_BORROW_DAYS = 14;
-//     char currentDateBuffer[20];
-//     Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
-//     tm current_tm = Utils::ParseDate(currentDateBuffer);
-
-//     int overdueCount = 0;
-
-//     cout << left << setw(10) << "ID User"
-//          << left << setw(20) << "Ten User"
-//          << left << setw(10) << "ID Sach"
-//          << left << setw(35) << "Ten Sach"
-//          << left << setw(12) << "Ngay muon"
-//          << left << setw(12) << "Han tra"
-//          << left << setw(10) << "So ngay tre"
-//          << endl;
-//     cout << setfill('-') << setw(109) << "-" << setfill(' ') << endl;
-
-//     for (int i = 0; i < userCount; i++) {
-//         const Person& person = allUsers[i];
-        
-//         User user;
-//         user.LoadUserByID(to_string(person.getID()));
-        
-//         const vector<BorrowedItem>& history = user.getTransactionHistory();
-        
-//         for (const auto& item : history) {
-//             // Chỉ hiển thị sách chưa trả và quá hạn
-//             if (item.getIsReturned()) {
-//                 continue;
-//             }
-
-//             int bookID = item.getBookID();
-//             string borrowDateStr = item.getBorrowDate();
-//             Book* book = bookManager.GetBookByID(bookID);
-
-//             // Tính toán hạn trả
-//             tm borrow_tm = Utils::ParseDate(borrowDateStr);
-//             tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
-//             string dueDateStr = Utils::FormatDate(dueDate_tm);
-            
-//             // Kiểm tra quá hạn
-//             if (Utils::CompareDates(current_tm, dueDate_tm) > 0) {
-//                 // Tính số ngày trễ
-//                 int daysOverdue = Utils::CompareDates(current_tm, dueDate_tm);
-                
-//                 cout << left << setw(10) << person.getID()
-//                      << left << setw(20) << person.getName()
-//                      << left << setw(10) << bookID;
-
-//                 string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa";
-//                 if (bookTitle.length() > 34) {
-//                     bookTitle = bookTitle.substr(0, 31) + "...";
-//                 }
-//                 cout << left << setw(35) << bookTitle;
-                
-//                 cout << left << setw(12) << borrowDateStr;
-//                 cout << left << setw(12) << dueDateStr;
-//                 cout << left << setw(10) << daysOverdue;
-//                 cout << endl;
-
-//                 overdueCount++;
-//             }
-//         }
-//     }
-
-//     if (overdueCount == 0) {
-//         cout << "Khong co sach nao qua han.\n";
-//     }
-
-//     cout << setfill('-') << setw(109) << "-" << setfill(' ') << endl;
-//     cout << "Tong so sach qua han: " << overdueCount << "\n";
-// }
 void BorrowManager::ShowActiveAndOverdueBorrows(UserManager& userManager, BookManager& bookManager) {
     cout << "\n=== SACH DANG MUON & QUA HAN ===\n";
 
@@ -186,14 +103,134 @@ void BorrowManager::ShowActiveAndOverdueBorrows(UserManager& userManager, BookMa
     cout << "So sach qua han: " << overdueBorrows << "\n";
 }
 
+vector<TransactionRecord> BorrowManager::LoadAllTransactions() {
+    vector<TransactionRecord> transactions;
+
+    // Load borrow records
+    ifstream borrowFile("BorrowRecords.txt");
+    if (borrowFile.is_open()) {
+        string line;
+        TransactionRecord current;
+        bool isNew = false;
+        while (getline(borrowFile, line)) {
+            if (line.find("=== THONG TIN MUON SACH ===") != string::npos) {
+                if (isNew) {
+                    current.isReturned = false;
+                    current.returnDate = "";
+                    transactions.push_back(current);
+                }
+                current = TransactionRecord();
+                isNew = true;
+            } else if (isNew) {
+                size_t colon_pos = line.find(':');
+                if (colon_pos != string::npos) {
+                    string key = line.substr(0, colon_pos);
+                    string value = line.substr(colon_pos + 1);
+                    value.erase(0, value.find_first_not_of(" \t\r\n"));
+                    value.erase(value.find_last_not_of(" \t\r\n") + 1);
+                    if (key.find("Thoi gian ghi nhan") != string::npos) {
+                        current.timeStamp = value;
+                    } else if (key.find("ID nguoi dung") != string::npos) {
+                        current.userID = stoi(value);
+                    } else if (key.find("Ten nguoi dung") != string::npos) {
+                        current.userName = value;
+                    } else if (key.find("ID sach") != string::npos) {
+                        current.bookID = stoi(value);
+                    } else if (key.find("Ten sach") != string::npos) {
+                        current.bookTitle = value;
+                    } else if (key.find("Ngay muon") != string::npos) {
+                        current.borrowDate = value;
+                    }
+                }
+            } else if (line.find("----------------------------------------") != string::npos) {
+                if (isNew) {
+                    current.isReturned = false;
+                    current.returnDate = "";
+                    transactions.push_back(current);
+                }
+                isNew = false;
+            }
+        }
+        if (isNew) {
+            current.isReturned = false;
+            current.returnDate = "";
+            transactions.push_back(current);
+        }
+        borrowFile.close();
+    }
+
+    // Load return records and update transactions
+    ifstream returnFile("ReturnRecords.txt");
+    if (returnFile.is_open()) {
+        string line;
+        TransactionRecord currentReturn;
+        bool isNew = false;
+        while (getline(returnFile, line)) {
+            if (line.find("=== THONG TIN TRA SACH ===") != string::npos) {
+                if (isNew) {
+                    // Find matching transaction
+                    for (auto& trans : transactions) {
+                        if (trans.userID == currentReturn.userID && trans.bookID == currentReturn.bookID && !trans.isReturned) {
+                            trans.isReturned = true;
+                            trans.returnDate = currentReturn.returnDate;
+                            break;
+                        }
+                    }
+                }
+                currentReturn = TransactionRecord();
+                isNew = true;
+            } else if (isNew) {
+                size_t colon_pos = line.find(':');
+                if (colon_pos != string::npos) {
+                    string key = line.substr(0, colon_pos);
+                    string value = line.substr(colon_pos + 1);
+                    value.erase(0, value.find_first_not_of(" \t\r\n"));
+                    value.erase(value.find_last_not_of(" \t\r\n") + 1);
+                    if (key.find("ID nguoi dung") != string::npos) {
+                        currentReturn.userID = stoi(value);
+                    } else if (key.find("ID sach") != string::npos) {
+                        currentReturn.bookID = stoi(value);
+                    } else if (key.find("Ngay tra") != string::npos) {
+                        currentReturn.returnDate = value;
+                    }
+                }
+            } else if (line.find("----------------------------------------") != string::npos) {
+                if (isNew) {
+                    // Find matching transaction
+                    for (auto& trans : transactions) {
+                        if (trans.userID == currentReturn.userID && trans.bookID == currentReturn.bookID && !trans.isReturned) {
+                            trans.isReturned = true;
+                            trans.returnDate = currentReturn.returnDate;
+                            break;
+                        }
+                    }
+                }
+                isNew = false;
+            }
+        }
+        if (isNew) {
+            // Find matching transaction
+            for (auto& trans : transactions) {
+                if (trans.userID == currentReturn.userID && trans.bookID == currentReturn.bookID && !trans.isReturned) {
+                    trans.isReturned = true;
+                    trans.returnDate = currentReturn.returnDate;
+                    break;
+                }
+            }
+        }
+        returnFile.close();
+    }
+
+    return transactions;
+}
+
 void BorrowManager::ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager) {
     cout << "\n=== LICH SU GIAO DICH CUA TAT CA DOC GIA ===\n";
 
-    const Person* allUsers = userManager.GetAllUsers();
-    int userCount = userManager.GetUserCount();
-    
-    if (userCount == 0) {
-        cout << "Khong co doc gia nao trong he thong.\n";
+    vector<TransactionRecord> transactions = LoadAllTransactions();
+
+    if (transactions.empty()) {
+        cout << "Khong co giao dich nao trong he thong.\n";
         return;
     }
 
@@ -202,90 +239,71 @@ void BorrowManager::ShowAllUsersTransactionHistory(UserManager& userManager, Boo
     Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
     tm current_tm = Utils::ParseDate(currentDateBuffer);
 
-    int totalTransactions = 0;
+    int totalTransactions = transactions.size();
     int activeBorrows = 0;
     int overdueBorrows = 0;
 
-    cout << left << setw(8) << "ID Muon"
-         << left << setw(10) << "ID User"
-         << left << setw(20) << "Ten User"
-         << left << setw(10) << "ID Sach"
-         << left << setw(35) << "Ten Sach"
-         << left << setw(12) << "Ngay muon"
-         << left << setw(12) << "Ngay tra"
-         << left << setw(12) << "Han tra"
+    cout << left << setw(8) << "ID Muon" << " "
+         << left << setw(10) << "ID User" << " "
+         << left << setw(20) << "Ten User" << " "
+         << left << setw(10) << "ID Sach" << " "
+         << left << setw(35) << "Ten Sach" << " "
+         << left << setw(12) << "Ngay muon" << " "
+         << left << setw(12) << "Ngay tra" << " "
+         << left << setw(12) << "Han tra" << " "
          << left << setw(15) << "Trang thai"
          << endl;
     cout << setfill('-') << setw(135) << "-" << setfill(' ') << endl;
 
     int borrowID = 1;
 
-    for (int i = 0; i < userCount; i++) {
-        const Person& person = allUsers[i];
-        
-        User user;
-        user.LoadUserByID(to_string(person.getID()));
-        
-        const vector<BorrowedItem>& history = user.getTransactionHistory();
-        
-        if (history.empty()) {
-            continue;
+    for (const auto& trans : transactions) {
+        cout << left << setw(8) << borrowID++ << " ";
+
+        cout << left << setw(10) << trans.userID << " "
+             << left << setw(20) << trans.userName << " ";
+
+        cout << left << setw(10) << trans.bookID << " ";
+
+        Book* book = bookManager.GetBookByID(trans.bookID);
+        string bookTitle = (book) ? book->getTitle() : trans.bookTitle;
+        if (bookTitle.length() > 34) {
+            bookTitle = bookTitle.substr(0, 31) + "...";
         }
+        cout << left << setw(35) << bookTitle << " ";
+        
+        cout << left << setw(12) << trans.borrowDate << " ";
+        cout << left << setw(12) << (trans.isReturned ? trans.returnDate : "--") << " ";
 
-        for (const auto& item : history) {
-            int bookID = item.getBookID();
-            string borrowDateStr = item.getBorrowDate();
-            string returnDateStr = item.getReturnDate();
-            Book* book = bookManager.GetBookByID(bookID);
+        tm borrow_tm = Utils::ParseDate(trans.borrowDate);
+        tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
+        string dueDateStr = Utils::FormatDate(dueDate_tm);
+        cout << left << setw(12) << dueDateStr << " ";
 
-            cout << left << setw(8) << borrowID++;
-
-            cout << left << setw(10) << person.getID()
-                 << left << setw(20) << person.getName();
-
-            cout << left << setw(10) << bookID;
-
-            string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa";
-            if (bookTitle.length() > 34) {
-                bookTitle = bookTitle.substr(0, 31) + "...";
+        string status;
+        if (trans.isReturned) {
+            status = "Da tra";
+            tm return_tm = Utils::ParseDate(trans.returnDate);
+            if (Utils::CompareDates(return_tm, dueDate_tm) > 0) {
+                status += " (Tre)";
+                overdueBorrows++;
             }
-            cout << left << setw(35) << bookTitle;
-            
-            cout << left << setw(12) << borrowDateStr;
-            cout << left << setw(12) << (item.getIsReturned() ? returnDateStr : "--");
-
-            tm borrow_tm = Utils::ParseDate(borrowDateStr);
-            tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
-            string dueDateStr = Utils::FormatDate(dueDate_tm);
-            cout << left << setw(12) << dueDateStr;
-
-            string status;
-            if (item.getIsReturned()) {
-                status = "Da tra";
-                tm return_tm = Utils::ParseDate(returnDateStr);
-                if (Utils::CompareDates(return_tm, dueDate_tm) > 0) {
-                    status += " (Tre)";
-                    overdueBorrows++;
-                }
-            } else {
-                status = "Dang muon";
-                activeBorrows++;
-                if (Utils::CompareDates(current_tm, dueDate_tm) > 0) {
-                    status = "QUA HAN";
-                    overdueBorrows++;
-                }
+        } else {
+            status = "Dang muon";
+            activeBorrows++;
+            if (Utils::CompareDates(current_tm, dueDate_tm) > 0) {
+                status = "QUA HAN";
+                overdueBorrows++;
             }
-            cout << left << setw(15) << status;
-            cout << endl;
-
-            totalTransactions++;
         }
+        cout << left << setw(15) << status;
+        cout << endl;
     }
 
     cout << setfill('-') << setw(135) << "-" << setfill(' ') << endl;
 
     cout << "\n=== TONG QUAN HE THONG ===\n";
-    cout << "Tong so doc gia: " << userCount << "\n";
+    cout << "Tong so doc gia: " << userManager.GetUserCount() << "\n";
     cout << "Tong so giao dich: " << totalTransactions << "\n";
     cout << "So sach dang muon: " << activeBorrows << "\n";
     cout << "So sach qua han: " << overdueBorrows << "\n";
@@ -637,7 +655,8 @@ void BorrowManager::ShowBorrowRecords()
     const int BOOK_ID_WIDTH = 8;
     const int BOOK_TITLE_WIDTH = 40;
     const int DATE_WIDTH = 15;
-    const int TOTAL_WIDTH = TIME_WIDTH + USER_ID_WIDTH + USER_NAME_WIDTH + BOOK_ID_WIDTH + BOOK_TITLE_WIDTH + DATE_WIDTH + 6;
+    const int STATUS_WIDTH = 15;
+    const int TOTAL_WIDTH = TIME_WIDTH + USER_ID_WIDTH + USER_NAME_WIDTH + BOOK_ID_WIDTH + BOOK_TITLE_WIDTH + DATE_WIDTH + STATUS_WIDTH + 7;
 
     cout << setfill(' ');
     cout << left << setw(TIME_WIDTH) << "Thoi gian ghi nhan"
@@ -646,6 +665,7 @@ void BorrowManager::ShowBorrowRecords()
          << left << setw(BOOK_ID_WIDTH) << "ID Sach"
          << left << setw(BOOK_TITLE_WIDTH) << "Ten Sach"
          << left << setw(DATE_WIDTH) << "Ngay Muon"
+         << left << setw(STATUS_WIDTH) << "Trang thai"
          << endl;
 
     cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
@@ -658,6 +678,7 @@ void BorrowManager::ShowBorrowRecords()
              << left << setw(BOOK_ID_WIDTH) << rec.bookID
              << left << setw(BOOK_TITLE_WIDTH) << rec.bookTitle
              << left << setw(DATE_WIDTH) << rec.borrowDate
+             << left << setw(STATUS_WIDTH) << "Da muon"
              << endl;
     }
 

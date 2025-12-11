@@ -2,6 +2,7 @@
 #include <ctime>
 #include <iostream>
 #include <cstdio>
+#include <string>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ const int Utils::daysInMonth[13] = {
     0, 31, 28, 31, 30, 31, 30,
     31, 31, 30, 31, 30, 31
 };
-
+const int MAX_STREAM_SIZE_MANUAL = 100;
 bool Utils::AskReturnToMenu()
 {
     char choiceInput[10];
@@ -167,13 +168,6 @@ void Utils::GetCurrentDateManual(char* buffer, size_t buffer_size)
     CopyStringManual(buffer, "19/11/2025", buffer_size);
 }
 
-int Utils::CalculateDateDifference(const char* date1, const char* date2)
-{
-    long long d1 = GetTotalDays(date1);
-    long long d2 = GetTotalDays(date2);
-    return (int)(d1 - d2);
-}
-
 int Utils::CompareDates(const char* date1, const char* date2)
 {
     int y1 = CharArrayToIntManual(date1 + 6);
@@ -252,6 +246,15 @@ int Utils::CompareDates(const tm& date1, const tm& date2)
     if (t1 < t2) return -1;
     if (t1 > t2) return 1;
     return 0;
+}
+
+long long Utils::GetTotalDays(const char* date) {
+    // Simple implementation: DD/MM/YYYY to approximate days
+    int d = CharArrayToIntManual(date);
+    int m = CharArrayToIntManual(date + 3);
+    int y = CharArrayToIntManual(date + 6);
+    long long days = (long long)y * 365 + y / 4 - y / 100 + y / 400 + (m - 1) * 30 + d;
+    return days;
 }
 
 string Utils::GeneratePassword(const string& lastName, const string& dob)

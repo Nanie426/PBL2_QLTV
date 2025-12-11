@@ -114,7 +114,8 @@ void Admin::BookMenu()
                 cout << "\n--- MENU TIM KIEM SACH ---\n";
                 cout << "1. Theo ten\n";
                 cout << "2. Theo tac gia\n";
-                cout << "3. Theo ID\n";
+                cout << "3. Theo the loai\n";
+                cout << "4. Theo ID\n";
                 cout << "0. Quay lai\n";
                 cout << "Chon: ";
                 cin.getline(subInput, sizeof(subInput));
@@ -131,6 +132,13 @@ void Admin::BookMenu()
                 }
                 else if (subChoice == 3)
                 {
+                    char category[100];
+                    cout << "Nhap the loai: ";
+                    cin.getline(category, sizeof(category));
+                    bookManager.SearchBookByCategory(category);
+                }
+                else if (subChoice == 4)
+                {
                     char idStr[20];
                     int bookID;
                     cout << "Nhap ID sach: ";
@@ -138,7 +146,42 @@ void Admin::BookMenu()
                     bookID = Utils::CharArrayToIntManual(idStr);
                     const Book *bookPtr = bookManager.GetBookByID(bookID);
                     if (bookPtr)
-                        bookPtr->Show();
+                    {
+                        cout << "\n--- KET QUA TIM KIEM ID: " << bookID << " ---\n";
+                        // Thiết lập độ rộng cột cho bảng
+                        const int ID_WIDTH = 8;
+                        const int TITLE_WIDTH = 45;
+                        const int AUTHOR_WIDTH = 30;
+                        const int CATEGORY_WIDTH = 20;
+                        const int YEAR_WIDTH = 10;
+                        const int QUANTITY_WIDTH = 10;
+                        const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+
+                        // In tiêu đề bảng
+                        cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
+                             << left << setw(TITLE_WIDTH) << "Ten sach"
+                             << left << setw(AUTHOR_WIDTH) << "Tac gia"
+                             << left << setw(CATEGORY_WIDTH) << "The loai"
+                             << left << setw(YEAR_WIDTH) << "Nam XB"
+                             << left << setw(QUANTITY_WIDTH) << "So luong"
+                             << endl;
+
+                        // In dòng phân cách
+                        cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+
+                        // In dữ liệu
+                        cout << left << setw(ID_WIDTH) << bookPtr->getID()
+                             << left << setw(TITLE_WIDTH) << bookPtr->getTitle()
+                             << left << setw(AUTHOR_WIDTH) << bookPtr->getAuthor()
+                             << left << setw(CATEGORY_WIDTH) << bookPtr->getCategory()
+                             << left << setw(YEAR_WIDTH) << bookPtr->getPubYear()
+                             << left << setw(QUANTITY_WIDTH) << bookPtr->getQuantity()
+                             << endl;
+
+                        // In dòng kết thúc
+                        cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+                        cout << "Tim thay 1 cuon sach.\n";
+                    }
                     else
                         cout << "Khong tim thay sach co ID " << bookID << "\n";
                 }

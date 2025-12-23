@@ -1,31 +1,15 @@
 #include "Admin.h"
+#include "Utils.h"
 
-// THÊM CONSTRUCTOR
 Admin::Admin() 
     : statsManager(userManager, bookManager, borrowManager) 
 {
 }
 
-// THÊM HÀM MENU THỐNG KÊ
 void Admin::StatisticsMenu()
 {
     statsManager.ShowStatisticsMenu();
 }
-
-// bool Admin::AskReturnToMenu()
-// {
-//     char choice;
-//     cout << "\nBan co muon quay lai MENU khong? (Y/N): ";
-//     choice = cin.get(); 
-//     if (choice == '\n') {
-//         return true; 
-//     }
-//     cin.ignore(100, '\n'); 
-
-//     if (choice == 'Y' || choice == 'y')
-//         return true;
-//     return false;
-// }
 
 void Admin::UserMenu()
 {
@@ -34,13 +18,21 @@ void Admin::UserMenu()
 
     do
     {
-        cout << "\n========= QUAN LY NGUOI DUNG =========\n";
-        cout << "1. Them nguoi dung\n";
-        cout << "2. Xem danh sach nguoi dung\n";
-        cout << "3. Sua thong tin nguoi dung\n";
-        cout << "4. Xoa nguoi dung\n";
-        cout << "0. Quay lai MENU chinh\n";
-        cout << "Chon: ";
+        cout << Utils::GREEN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("QUAN LY NGUOI DUNG");
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuLine("1. Them nguoi dung moi");
+        Utils::PrintMenuLine("2. Xem tat ca nguoi dung");
+        Utils::PrintMenuLine("3. Chinh sua thong tin nguoi dung");
+        Utils::PrintMenuLine("4. Thai doi mat khau nguoi dung");
+        Utils::PrintMenuLine("5. Xoa nguoi dung");
+        Utils::PrintMenuLine("0. Quay lai menu chinh");
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+        cout << Utils::CYAN << "Chon: " << Utils::RESET;
 
         cin.getline(input, 10);
         choice = Utils::CharArrayToIntManual(input);
@@ -55,7 +47,7 @@ void Admin::UserMenu()
         else if (choice == 3)
         {
             int id;
-            cout << "Nhap ID nguoi dung can sua: ";
+            cout << Utils::CYAN << "Nhap ID nguoi dung can chinh sua: " << Utils::RESET;
             cin >> id;
             cin.ignore(100, '\n');
             userManager.UpdateUserByID(id);
@@ -64,14 +56,23 @@ void Admin::UserMenu()
         else if (choice == 4)
         {
             int id;
-            cout << "Nhap ID nguoi dung can xoa: ";
+            cout << Utils::CYAN << "Nhap ID nguoi dung de thay doi mat khau: " << Utils::RESET;
+            cin >> id;
+            cin.ignore(100, '\n');
+            userManager.ChangeUserPassword(id);
+            Utils::AskReturnToMenu();
+        }
+        else if (choice == 5)
+        {
+            int id;
+            cout << Utils::CYAN << "Nhap ID nguoi dung can xoa: " << Utils::RESET;
             cin >> id;
             cin.ignore(100, '\n');
             userManager.DeleteUserByID(id);
             Utils::AskReturnToMenu();
         }
         else if (choice == 0)
-            break;
+            ; // exit loop
         else
             cout << "Lua chon khong hop le!\n";
 
@@ -85,14 +86,21 @@ void Admin::BookMenu()
 
     do
     {
-        cout << "\n========= QUAN LY SACH =========\n";
-        cout << "1. Them sach\n";
-        cout << "2. Xem danh sach sach\n";
-        cout << "3. Tim sach\n";
-        cout << "4. Sua thong tin sach\n";
-        cout << "5. Xoa sach\n";
-        cout << "0. Quay lai MENU chinh\n";
-        cout << "Chon: ";
+        cout << Utils::YELLOW << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("QUAN LY SACH");
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuLine("1. Them sach moi");
+        Utils::PrintMenuLine("2. Xem tat ca sach");
+        Utils::PrintMenuLine("3. Tim kiem sach");
+        Utils::PrintMenuLine("4. Chinh sua thong tin sach");
+        Utils::PrintMenuLine("5. Xoa sach");
+        Utils::PrintMenuLine("0. Quay lai menu chinh");
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+        cout << Utils::CYAN << "Chon: " << Utils::RESET;
 
         cin.getline(input, 10);
         choice = Utils::CharArrayToIntManual(input);
@@ -111,13 +119,20 @@ void Admin::BookMenu()
             char subInput[10];
             do
             {
-                cout << "\n--- MENU TIM KIEM SACH ---\n";
-                cout << "1. Theo ten\n";
-                cout << "2. Theo tac gia\n";
-                cout << "3. Theo the loai\n";
-                cout << "4. Theo ID\n";
-                cout << "0. Quay lai\n";
-                cout << "Chon: ";
+                cout << Utils::CYAN << Utils::BOLD;
+                Utils::PrintMenuBorder();
+                Utils::PrintMenuHeader("MENU TIM KIEM SACH");
+                Utils::PrintMenuBorder();
+                Utils::PrintMenuLine("");
+                Utils::PrintMenuLine("1. Theo ten");
+                Utils::PrintMenuLine("2. Theo tac gia");
+                Utils::PrintMenuLine("3. Theo the loai");
+                Utils::PrintMenuLine("4. Theo ID");
+                Utils::PrintMenuLine("0. Quay lai menu chinh");
+                Utils::PrintMenuLine("");
+                Utils::PrintMenuBorder();
+                cout << Utils::RESET;
+                cout << Utils::CYAN << "Chon: " << Utils::RESET;
                 cin.getline(subInput, sizeof(subInput));
                 subChoice = Utils::StringToIntManual(subInput);
 
@@ -126,14 +141,14 @@ void Admin::BookMenu()
                 else if (subChoice == 2)
                 {
                     char author[100];
-                    cout << "Nhap ten tac gia: ";
+                    cout << Utils::CYAN << "Nhap ten tac gia: " << Utils::RESET;
                     cin.getline(author, sizeof(author));
                     bookManager.SearchBookByAuthor(author);
                 }
                 else if (subChoice == 3)
                 {
                     char category[100];
-                    cout << "Nhap the loai: ";
+                    cout << Utils::CYAN << "Nhap the loai: " << Utils::RESET;
                     cin.getline(category, sizeof(category));
                     bookManager.SearchBookByCategory(category);
                 }
@@ -141,13 +156,12 @@ void Admin::BookMenu()
                 {
                     char idStr[20];
                     int bookID;
-                    cout << "Nhap ID sach: ";
+                    cout << Utils::CYAN << "Nhap ID cuon sach: " << Utils::RESET;
                     cin.getline(idStr, sizeof(idStr));
                     bookID = Utils::CharArrayToIntManual(idStr);
                     const Book *bookPtr = bookManager.GetBookByID(bookID);
                     if (bookPtr)
                     {
-                        cout << "\n--- KET QUA TIM KIEM ID: " << bookID << " ---\n";
                         // Thiết lập độ rộng cột cho bảng
                         const int ID_WIDTH = 8;
                         const int TITLE_WIDTH = 45;
@@ -155,35 +169,43 @@ void Admin::BookMenu()
                         const int CATEGORY_WIDTH = 20;
                         const int YEAR_WIDTH = 10;
                         const int QUANTITY_WIDTH = 10;
-                        const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+                        const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-                        // In tiêu đề bảng
-                        cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
-                             << left << setw(TITLE_WIDTH) << "Ten sach"
-                             << left << setw(AUTHOR_WIDTH) << "Tac gia"
-                             << left << setw(CATEGORY_WIDTH) << "The loai"
-                             << left << setw(YEAR_WIDTH) << "Nam XB"
+                        cout << Utils::CYAN << Utils::BOLD;
+                        Utils::PrintMenuBorder();
+                        Utils::PrintMenuHeader("SEARCH RESULT - BOOK ID: " + to_string(bookID));
+                        Utils::PrintMenuBorder();
+                        cout << Utils::RESET;
+
+                        // Table headers
+                        cout << Utils::BOLD << Utils::YELLOW
+                             << left << setw(ID_WIDTH) << "ID" << " "
+                             << left << setw(TITLE_WIDTH) << "Ten sach" << " "
+                             << left << setw(AUTHOR_WIDTH) << "Tac gia" << " "
+                             << left << setw(CATEGORY_WIDTH) << "The loai" << " "
+                             << left << setw(YEAR_WIDTH) << "Nam XB" << " "
                              << left << setw(QUANTITY_WIDTH) << "So luong"
-                             << endl;
+                             << Utils::RESET << endl;
 
-                        // In dòng phân cách
-                        cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+                        // Separator line
+                        Utils::PrintTableLine(columnWidths);
 
                         // In dữ liệu
-                        cout << left << setw(ID_WIDTH) << bookPtr->getID()
-                             << left << setw(TITLE_WIDTH) << bookPtr->getTitle()
-                             << left << setw(AUTHOR_WIDTH) << bookPtr->getAuthor()
-                             << left << setw(CATEGORY_WIDTH) << bookPtr->getCategory()
-                             << left << setw(YEAR_WIDTH) << bookPtr->getPubYear()
+                        cout << left << setw(ID_WIDTH) << bookPtr->getID() << " "
+                             << left << setw(TITLE_WIDTH) << bookPtr->getTitle() << " "
+                             << left << setw(AUTHOR_WIDTH) << bookPtr->getAuthor() << " "
+                             << left << setw(CATEGORY_WIDTH) << bookPtr->getCategory() << " "
+                             << left << setw(YEAR_WIDTH) << bookPtr->getPubYear() << " "
                              << left << setw(QUANTITY_WIDTH) << bookPtr->getQuantity()
                              << endl;
 
-                        // In dòng kết thúc
-                        cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
-                        cout << "Tim thay 1 cuon sach.\n";
+                        // Bottom separator
+                        Utils::PrintTableLine(columnWidths);
+
+                        cout << Utils::GREEN << "Tim thay 1 cuon sach." << Utils::RESET << "\n";
                     }
                     else
-                        cout << "Khong tim thay sach co ID " << bookID << "\n";
+                        cout << Utils::RED << "Khong tim thay sach co ID " << bookID << Utils::RESET << "\n";
                 }
                 else if (subChoice == 0)
                     break;
@@ -192,14 +214,13 @@ void Admin::BookMenu()
 
             } while (subChoice != 0);
 
-            Utils::AskReturnToMenu();
             break;
         }
         }
         else if (choice == 4)
         {
             int id;
-            cout << "Nhap ID sach can sua: ";
+            cout << Utils::CYAN << "Nhap ID sach can sua: " << Utils::RESET;
             cin >> id;
             cin.ignore(100, '\n');
             bookManager.UpdateBookByID(id);
@@ -208,14 +229,14 @@ void Admin::BookMenu()
         else if (choice == 5)
         {
             int id;
-            cout << "Nhap ID sach can xoa: ";
+            cout << Utils::CYAN << "Nhap ID sach can xoa: " << Utils::RESET;
             cin >> id;
             cin.ignore(100, '\n');
             bookManager.DeleteBookByID(id);
             Utils::AskReturnToMenu();
         }
         else if (choice == 0)
-            break;
+            ; // exit loop
         else
             cout << "Lua chon khong hop le!\n";
 
@@ -229,13 +250,20 @@ void Admin::BorrowBookMenu()
 
     do
     {
-        cout << "\n========= QUAN LY MUON/TRA SACH =========\n";
-        cout << "1. Them thong tin muon sach\n";
-        cout << "2. Ghi nhan tra sach\n";
-        cout << "3. Xem sach nguoi dung dang muon\n";
-        cout << "4. Xem lich su muon sach\n";
-        cout << "0. Quay lai MENU chinh\n";
-        cout << "Chon: ";
+        cout << Utils::CYAN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("QUAN LY MUON/TRA SACH");
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuLine("1. Muon sach");
+        Utils::PrintMenuLine("2. Tra sach");
+        Utils::PrintMenuLine("3. Xem sach da muon");
+        Utils::PrintMenuLine("4. Xem lich su giao dich");
+        Utils::PrintMenuLine("0. Quay ve menu chinh");
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+        cout << Utils::CYAN << "Chon: " << Utils::RESET;
 
         cin.getline(input, 10);
         choice = Utils::CharArrayToIntManual(input);
@@ -268,7 +296,7 @@ void Admin::BorrowBookMenu()
             if (viewDetailChoice == 'y' || viewDetailChoice == 'Y') {
                 do {
                     int userID;
-                    cout << "\nNhap ID doc gia can xem chi tiet (nhap 0 de thoat): ";
+                    cout << Utils::CYAN << "\nNhap ID doc gia de xem chi tiet (nhap 0 de thoat): " << Utils::RESET;
                     if (!(cin >> userID)) {
                         cout << "ID khong hop le.\n";
                         cin.clear();
@@ -297,7 +325,7 @@ void Admin::BorrowBookMenu()
             Utils::AskReturnToMenu();
         }
         else if (choice == 0)
-            break;
+            ; // exit loop
         else
             cout << "Lua chon khong hop le!\n";
 
@@ -311,13 +339,20 @@ void Admin::Menu()
 
     do
     {
-        cout << "\n========= HE THONG QUAN LY ADMIN =========\n";
-        cout << "1. Quan ly nguoi dung\n";
-        cout << "2. Quan ly sach\n";
-        cout << "3. Quan ly muon/tra sach\n";
-        cout << "4. Thong ke\n"; // SỬA: GỌI MENU THỐNG KÊ
-        cout << "0. Thoat\n";
-        cout << "Chon: ";
+        cout << Utils::MAGENTA << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("HE THONG QUAN LY THU VIEN - ADMIN");
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuLine("1. Quan ly nguoi dung");
+        Utils::PrintMenuLine("2. Quan ly sach");
+        Utils::PrintMenuLine("3. Quan ly muon/tra");
+        Utils::PrintMenuLine("4. Thong ke & Bao cao");
+        Utils::PrintMenuLine("0. Dang xuat");
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+        cout << Utils::CYAN << "Chon: " << Utils::RESET;
 
         cin.getline(input, 10);
         choice = Utils::CharArrayToIntManual(input);
@@ -333,9 +368,9 @@ void Admin::Menu()
             StatisticsMenu();
         }
         else if (choice == 0)
-            cout << "Thoat chuong trinh.\n";
+            cout << Utils::YELLOW << "Dang xuat khoi Admin Panel...\n" << Utils::RESET;
         else
-            cout << "Lua chon khong hop le!\n";
+            cout << Utils::RED << "Lua chon khong hop le! Vui long chon mot lua chon hop le.\n" << Utils::RESET;
 
     } while (choice != 0);
 }

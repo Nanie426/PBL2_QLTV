@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "UserManager.h"
 #include "BookManager.h"
 #include "BorrowManager.h"

@@ -224,10 +224,10 @@ bool User::ReturnBook(int bookID)
 
 void User::LoadUserByID(const string &id)
 {
-    ifstream file("users.txt");
+    ifstream file("Users.txt");
     if (!file.is_open())
     {
-        cout << "Khong the mo file users.txt\n";
+        cout << "Khong the mo file Users.txt\n";
         return;
     }
 
@@ -269,27 +269,54 @@ void User::LoadUserByID(const string &id)
 
 void User::ShowTransactionHistory(BookManager& bookManager)
 {
-    cout << "\n--- LICH SU GIAO DICH CUA: " << this->getName() << " ---\n";
-
     if (transactionHistory.empty()) 
     {
-        cout << "Hien tai nguoi dung nay chua co giao dich nao.\n";
+        cout << Utils::YELLOW << "Nguoi dung nay chua co lich su giao dich." << Utils::RESET << "\n";
         return;
     }
+
+    // Thiết lập độ rộng cột cho bảng
+    const int BOOK_ID_WIDTH = 10;
+    const int BOOK_TITLE_WIDTH = 35;
+    const int BORROW_DATE_WIDTH = 15;
+    const int RETURN_DATE_WIDTH = 15;
+    const int DUE_DATE_WIDTH = 15;
+    const int STATUS_WIDTH = 15;
+    const vector<int> columnWidths = {BOOK_ID_WIDTH, BOOK_TITLE_WIDTH, BORROW_DATE_WIDTH, RETURN_DATE_WIDTH, DUE_DATE_WIDTH, STATUS_WIDTH};
+
+    // cout << Utils::CYAN << Utils::BOLD;
+    // Utils::PrintMenuBorder();
+    // Utils::PrintMenuHeader("LICH SU GIAO DICH - " + string(getName()));
+    // Utils::PrintMenuBorder();
+    // cout << Utils::RESET;
+    int tableWidth = 0;
+    for (int width : columnWidths) {
+        tableWidth += width + 1;
+    }
+    tableWidth -= 1;
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(tableWidth);
+    Utils::PrintMenuHeader("LICH SU GIAO DICH - " + string(getName()), tableWidth);
+    Utils::PrintMenuBorder(tableWidth);
+    cout << Utils::RESET;
+    // Table headers
+    cout << Utils::BOLD << Utils::YELLOW
+         << left << setw(BOOK_ID_WIDTH) << "ID Sach" << " "
+         << left << setw(BOOK_TITLE_WIDTH) << "Ten Sach" << " "
+         << left << setw(BORROW_DATE_WIDTH) << "Ngay muon" << " "
+         << left << setw(RETURN_DATE_WIDTH) << "Ngay tra" << " "
+         << left << setw(DUE_DATE_WIDTH) << "Han tra" << " "
+         << left << setw(STATUS_WIDTH) << "Trang thai"
+         << Utils::RESET << endl;
+
+    // Separator line
+    Utils::PrintTableLine(columnWidths);
 
     const int DEFAULT_BORROW_DAYS = 14; 
     char currentDateBuffer[20];
     Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
     tm current_tm = Utils::ParseDate(currentDateBuffer);
-
-    cout << left << setw(10) << "ID Sach"
-         << left << setw(35) << "Ten Sach"
-         << left << setw(15) << "Ngay muon"
-         << left << setw(15) << "Ngay tra"
-         << left << setw(15) << "Han tra"
-         << left << setw(15) << "Trang thai"
-         << endl;
-    cout << setfill('-') << setw(105) << "-" << setfill(' ') << endl;
 
     for (const auto& item : transactionHistory)
     {
@@ -298,17 +325,17 @@ void User::ShowTransactionHistory(BookManager& bookManager)
         string returnDateStr = item.getReturnDate();
         Book* book = bookManager.GetBookByID(bookID);
 
-        cout << left << setw(10) << bookID;
+        cout << left << setw(BOOK_ID_WIDTH) << bookID << " ";
 
         string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa khoi he thong";
-        cout << left << setw(35) << bookTitle;
-        cout << left << setw(15) << borrowDateStr;
-        cout << left << setw(15) << (item.getIsReturned() ? returnDateStr : "--");
+        cout << left << setw(BOOK_TITLE_WIDTH) << bookTitle << " "
+             << left << setw(BORROW_DATE_WIDTH) << borrowDateStr << " "
+             << left << setw(RETURN_DATE_WIDTH) << (item.getIsReturned() ? returnDateStr : "--") << " ";
 
         tm borrow_tm = Utils::ParseDate(borrowDateStr);
         tm dueDate_tm = Utils::AddDays(borrow_tm, 14);
         string dueDateStr = Utils::FormatDate(dueDate_tm);
-        cout << left << setw(15) << dueDateStr;
+        cout << left << setw(DUE_DATE_WIDTH) << dueDateStr << " ";
 
         string status;
         if (item.getIsReturned()) {
@@ -323,15 +350,16 @@ void User::ShowTransactionHistory(BookManager& bookManager)
                 status = "QUA HAN";
             }
         }
-        cout << left << setw(15) << status;
+        cout << left << setw(STATUS_WIDTH) << status;
         cout << endl;
     }
-    cout << setfill('-') << setw(105) << "-" << setfill(' ') << endl;
+
+    // Bottom separator
+    Utils::PrintTableLine(columnWidths);
 }
 
 void User::Show() const
 {
-    cout << "\n===== THONG TIN CA NHAN DOC GIA =====\n";
     Person::Show();
     cout << "So sach dang muon: " << getCurrentBorrowedCount() << " / " << MAX_BORROWED_BOOKS << "\n";
 }
@@ -343,15 +371,22 @@ void User::Menu(UserManager &manager, BookManager &bm)
 
     do
     {
-        cout << "\n========== MENU DOC GIA (" << getName() << ") ==========\n";
-        cout << "1. Tim kiem sach\n";
-        cout << "2. Xem tat ca sach\n";
-        cout << "3. Xem lich su giao dich\n";
-        cout << "4. Xem thong tin ca nhan\n";
-        cout << "5. Thay doi thong tin\n";
-        cout << "6. Doi mat khau\n";
-        cout << "0. Dang xuat\n";
-        cout << "Chon: ";
+        cout << Utils::CYAN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader(string("MENU DOC GIA - ") + getName());
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuLine("1. Tim kiem sach");
+        Utils::PrintMenuLine("2. Xem tat ca sach");
+        Utils::PrintMenuLine("3. Xem lich su giao dich");
+        Utils::PrintMenuLine("4. Xem thong tin ca nhan");
+        Utils::PrintMenuLine("5. Chinh sua thong tin ca nhan");
+        Utils::PrintMenuLine("6. Doi mat khau");
+        Utils::PrintMenuLine("0. Dang xuat");
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+        cout << Utils::CYAN << "Chon: " << Utils::RESET;
 
         if (cin.getline(input, sizeof(input)).fail())
         {
@@ -370,13 +405,20 @@ void User::Menu(UserManager &manager, BookManager &bm)
             char subInput[10];
             do
             {
-                cout << "\n--- MENU TIM KIEM SACH ---\n";
-                cout << "1. Theo ten\n";
-                cout << "2. Theo tac gia\n";
-                cout << "3. Theo the loai\n";
-                cout << "4. Theo ID\n";
-                cout << "0. Quay lai\n";
-                cout << "Chon: ";
+                cout << Utils::CYAN << Utils::BOLD;
+                Utils::PrintMenuBorder();
+                Utils::PrintMenuHeader("MENU TIM KIEM SACH");
+                Utils::PrintMenuBorder();
+                Utils::PrintMenuLine("");
+                Utils::PrintMenuLine("1. Theo ten");
+                Utils::PrintMenuLine("2. Theo tac gia");
+                Utils::PrintMenuLine("3. Theo the loai");
+                Utils::PrintMenuLine("4. Theo ID");
+                Utils::PrintMenuLine("0. Quay lai menu chinh");
+                Utils::PrintMenuLine("");
+                Utils::PrintMenuBorder();
+                cout << Utils::RESET;
+                cout << Utils::CYAN << "Chon: " << Utils::RESET;
                 cin.getline(subInput, sizeof(subInput));
                 subChoice = Utils::StringToIntManual(subInput);
 
@@ -385,14 +427,14 @@ void User::Menu(UserManager &manager, BookManager &bm)
                 else if (subChoice == 2)
                 {
                     char author[100];
-                    cout << "Nhap ten tac gia: ";
+                    cout << Utils::CYAN << "Nhap ten tac gia: " << Utils::RESET;
                     cin.getline(author, sizeof(author));
                     bm.SearchBookByAuthor(author);
                 }
                 else if (subChoice == 3)
                 {
                     char category[100];
-                    cout << "Nhap the loai: ";
+                    cout << Utils::CYAN << "Nhap the loai: " << Utils::RESET;
                     cin.getline(category, sizeof(category));
                     bm.SearchBookByCategory(category);
                 }
@@ -400,7 +442,7 @@ void User::Menu(UserManager &manager, BookManager &bm)
                 {
                     char idStr[20];
                     int bookID;
-                    cout << "Nhap ID sach: ";
+                    cout << Utils::CYAN << "Nhap ID cuon sach: " << Utils::RESET;
                     cin.getline(idStr, sizeof(idStr));
                     bookID = Utils::CharArrayToIntManual(idStr);
                     const Book *bookPtr = bm.GetBookByID(bookID);
@@ -411,8 +453,6 @@ void User::Menu(UserManager &manager, BookManager &bm)
                 }
 
             } while (subChoice != 0);
-
-            Utils::AskReturnToMenu();
             break;
         }
 
@@ -434,14 +474,13 @@ void User::Menu(UserManager &manager, BookManager &bm)
         case 5:
         {
             int id;
-            cout << "Nhap lai ID de xac nhan: ";
+            cout << Utils::CYAN << "Nhap lai ID de xac nhan: " << Utils::RESET;
             cin >> id;
             cin.ignore(MAX_STREAM_SIZE_MANUAL, '\n');
 
             if (id == getID())
             {
                 manager.UpdateByID(id);
-                cout << "Cap nhat thanh cong. Vui long dang nhap lai.\n";
             }
             else
                 cout << "ID khong dung.\n";

@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iomanip>
 #include <limits>
+#include <cctype>
 #include "BorrowManager.h"
 #include "UserManager.h"
 #include "BookManager.h"

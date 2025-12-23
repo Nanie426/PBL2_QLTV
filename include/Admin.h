@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "UserManager.h"
 #include "BookManager.h"
 #include "BorrowManager.h" 

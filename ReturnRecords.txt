@@ -1,0 +1,27 @@
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:43:15
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 141
+Ten sach: Nhat ky cua me
+Ngay tra: 23/12/2025
+----------------------------------------
+
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:49:28
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 133
+Ten sach: La nam trong la
+Ngay tra: 23/12/2025
+----------------------------------------
+
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:53:39
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 142
+Ten sach: Mua hoa sua
+Ngay tra: 23/12/2025
+----------------------------------------
+

@@ -1,4 +1,5 @@
 #include "UserManager.h"
+#include "Utils.h"
 #include <cstring>
 
 string UserManager::GenerateNextUserID()
@@ -122,33 +123,53 @@ void UserManager::AddUser()
 {
     char choice;
     do {
-        cout << "\n--- THEM NGUOI DUNG MOI ---\n";
+        cout << Utils::GREEN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("THEM NGUOI DUNG MOI");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
 
         string newIDStr = GenerateNextUserID();
         int tempID = Utils::StringToIntManual(newIDStr.c_str());
 
-        cout << "ID nguoi dung moi: " << newIDStr << "\n";
+        cout << Utils::CYAN << "ID nguoi dung moi: " << Utils::YELLOW << newIDStr << Utils::RESET << "\n\n";
 
         users[userCount].setID(tempID);
 
-        // Nhập thông tin cơ bản (Không nhập mật khẩu)
-        users[userCount].InputUserDetails(); 
+        // Input user details with nice formatting
+        cout << Utils::BOLD << "Hay nhap thong tin:" << Utils::RESET << "\n";
+        cout << Utils::CYAN << string(59, '-') << Utils::RESET << "\n";
+        users[userCount].InputUserDetails();
 
-        // Tạo mật khẩu tự động
+        // Generate password automatically
         string lastName = users[userCount].getLastName();
         string dob = users[userCount].getDate();
         string newPassword = Utils::GeneratePassword(lastName, dob);
 
         users[userCount].setPassword(newPassword.c_str());
-        cout << "Them nguoi dung thanh cong!" << "\n";
 
-        cout << "MAT KHAU: " << newPassword << "\n";
-        users[userCount].Show();
+        // Success message with nice formatting
+        cout << Utils::GREEN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuLine("THEM NGUOI DUNG THANH CONG!");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+
+        cout << Utils::YELLOW << "Mat khau duoc tao: " << Utils::RED << Utils::BOLD << newPassword << Utils::RESET << "\n\n";
+        // Show user information with nice formatting
+        cout << Utils::CYAN << Utils::BOLD << "THONG TIN NGUOI DUNG:" << Utils::RESET << "\n";
+        cout << Utils::CYAN << string(59, '-') << Utils::RESET << "\n";
+        cout << Utils::WHITE << "ID: " << Utils::YELLOW << users[userCount].getID() << Utils::RESET << "\n";
+        cout << Utils::WHITE << "Ho Ten: " << Utils::YELLOW << users[userCount].getName() << Utils::RESET << "\n";
+        cout << Utils::WHITE << "Ngay Sinh: " << Utils::YELLOW << users[userCount].getDate() << Utils::RESET << "\n";
+        cout << Utils::WHITE << "So Dien Thoai: " << Utils::YELLOW << users[userCount].getPhone() << Utils::RESET << "\n";
+        cout << Utils::WHITE << "Email: " << Utils::YELLOW << users[userCount].getEmail() << Utils::RESET << "\n";
+        cout << Utils::CYAN << string(59, '-') << Utils::RESET << "\n\n";
 
         userCount++;
         SaveUsersToFile();
 
-        cout << "Ban co muon them nguoi dung khac khong? (Y/N): ";
+        cout << Utils::CYAN << "Ban co muon them nguoi dung moi khac khong? (Y/N): " << Utils::RESET;
         cin >> choice;
         cin.ignore(100, '\n');
 
@@ -161,32 +182,41 @@ void UserManager::ShowAllUsers() const
 {
     if (userCount == 0)
     {
-        cout << "Chua co nguoi dung nao!\n";
+        cout << Utils::YELLOW << "Khong tim thay nguoi dung nao trong he thong!" << Utils::RESET << "\n";
         return;
     }
 
-    // Thiết lập độ rộng cột cho bảng
     const int ID_WIDTH = 10;
     const int NAME_WIDTH = 30;
     const int DATE_WIDTH = 12;
     const int PHONE_WIDTH = 12;
     const int EMAIL_WIDTH = 30;
-    const int TOTAL_WIDTH = ID_WIDTH + NAME_WIDTH + DATE_WIDTH + PHONE_WIDTH + EMAIL_WIDTH;
+    const vector<int> columnWidths = {ID_WIDTH, NAME_WIDTH, DATE_WIDTH, PHONE_WIDTH, EMAIL_WIDTH};
 
-    cout << "\n========== DANH SACH TAT CA NGUOI DUNG (" << userCount << " nguoi) ==========\n";
+    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
+    int tableWidth = 0;
+    for (int width : columnWidths) {
+        tableWidth += width + 1;
+    }
+    tableWidth -= 1;
 
-    // In tiêu đề bảng
-    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID" << " "
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(tableWidth);
+    Utils::PrintMenuHeader("Tat ca nguoi dung (" + to_string(userCount) + " nguoi dung)", tableWidth);
+    Utils::PrintMenuBorder(tableWidth);
+    cout << Utils::RESET;
+
+    // Table headers
+    cout << Utils::BOLD << Utils::YELLOW
+         << left << setw(ID_WIDTH) << "ID" << " "
          << left << setw(NAME_WIDTH) << "Ten" << " "
          << left << setw(DATE_WIDTH) << "Ngay sinh" << " "
          << left << setw(PHONE_WIDTH) << "So dien thoai" << " "
          << left << setw(EMAIL_WIDTH) << "Email"
-         << endl;
+         << Utils::RESET << endl;
 
-    // In dòng phân cách
-    cout << setfill('-') << setw(TOTAL_WIDTH + 4) << "" << setfill(' ') << endl;  // +4 for the 4 spaces
+    Utils::PrintTableLine(columnWidths);
 
-    // Duyệt và in dữ liệu
     for (int i = 0; i < userCount; ++i)
     {
         const Person& user = users[i];
@@ -198,8 +228,7 @@ void UserManager::ShowAllUsers() const
              << endl;
     }
 
-    // In dòng kết thúc
-    cout << setfill('-') << setw(TOTAL_WIDTH + 4) << "" << setfill(' ') << endl;
+    Utils::PrintTableLine(columnWidths);
 }
 
 void UserManager::DeleteUserByID(int id)
@@ -212,13 +241,23 @@ void UserManager::DeleteUserByID(int id)
 
         if (pos == -1)
         {
-            cout << "Khong tim thay nguoi dung co ID " << id << endl;
+            cout << Utils::RED << "Khong tim thay nguoi dung co ID " << id << Utils::RESET << endl;
         }
         else
         {
-            cout << "\nBan co chac chan muon xoa nguoi dung sau khong?\n";
+            cout << Utils::CYAN << Utils::BOLD;
+            Utils::PrintMenuBorder();
+            Utils::PrintMenuHeader("XAC NHAN XOA NGUOI DUNG");
+            Utils::PrintMenuBorder();
+            cout << Utils::RESET;
+
+            cout << Utils::YELLOW << "Ban co chac chan muon xoa nguoi dung sau khong?" << Utils::RESET << "\n\n";
             users[pos].Show();
-            cout << "Ban co chac chan muon xoa nguoi nay khong? (Y/N): ";
+
+            Utils::PrintMenuBorder();
+            cout << Utils::RESET;
+
+            cout << Utils::CYAN << "Ban co chac chan muon xoa nguoi nay khong? (Y/N): " << Utils::RESET;
 
             char confirm;
             cin >> confirm;
@@ -232,11 +271,18 @@ void UserManager::DeleteUserByID(int id)
 
                 userCount--;
                 SaveUsersToFile();
-                cout << "Xoa thanh cong!\n";
+
+                cout << Utils::GREEN << "XOA NGUOI DUNG THANH CONG!" << Utils::RESET << endl;
+
+                cout << Utils::RESET << endl;
+            }
+            else
+            {
+                cout << Utils::YELLOW << "Da huy thao tac xoa." << Utils::RESET << endl;
             }
         }
 
-        cout << "Ban co muon xoa nguoi dung khac khong? (Y/N): ";
+        cout << Utils::CYAN << "Ban co muon xoa nguoi dung khac khong? (Y/N): " << Utils::RESET;
         cin >> choice;
         cin.ignore(100, '\n');
 
@@ -244,7 +290,7 @@ void UserManager::DeleteUserByID(int id)
 
         if (choice == 'Y')
         {
-            cout << "Nhap ID nguoi dung can xoa: ";
+            cout << Utils::CYAN << "Nhap ID nguoi dung can xoa: " << Utils::RESET;
             if (!(cin >> id)) { cin.clear(); cin.ignore(100, '\n'); break; }
         }
 
@@ -260,7 +306,13 @@ void UserManager::UpdateUserByID(int id)
         {
             if (users[i].getID() == id)
             {
-                users[i].Update();
+                cout << Utils::CYAN << Utils::BOLD;
+                Utils::PrintMenuBorder();
+                Utils::PrintMenuHeader("CAP NHAT THONG TIN NGUOI DUNG");
+                Utils::PrintMenuBorder();
+                cout << Utils::RESET;
+
+                users[i].UpdateByUser();
                 SaveUsersToFile();
                 found = true;
                 break;
@@ -268,9 +320,9 @@ void UserManager::UpdateUserByID(int id)
         }
 
         if (!found)
-            cout << "Khong tim thay nguoi dung co ID " << id << endl;
+            cout << Utils::RED << "Khong tim thay nguoi dung co ID " << id << Utils::RESET << endl;
 
-        cout << "Ban co muon sua nguoi dung khac khong? (Y/N): ";
+        cout << Utils::CYAN << "Ban co muon sua nguoi dung khac khong? (Y/N): " << Utils::RESET;
         cin >> choice;
         cin.ignore(100, '\n');
 
@@ -278,7 +330,7 @@ void UserManager::UpdateUserByID(int id)
 
         if (choice == 'Y')
         {
-            cout << "Nhap ID nguoi dung can sua: ";
+            cout << Utils::CYAN << "Nhap ID nguoi dung can sua: " << Utils::RESET;
             if (!(cin >> id)) { cin.clear(); cin.ignore(100, '\n'); break; }
         }
 
@@ -307,4 +359,54 @@ void UserManager::UpdateByID(int id)
         // vòng lặp này thực ra vô nghĩa → bạn có thể xoá luôn
         // nhưng giữ nguyên theo code bạn gửi
     } while (choice == 'Y');
+}
+
+void UserManager::ChangeUserPassword(int id)
+{
+    char new1[50], new2[50];
+
+    bool found = false;
+    for (int i = 0; i < userCount; ++i)
+    {
+        if (users[i].getID() == id)
+        {
+            cout << Utils::CYAN << Utils::BOLD;
+            Utils::PrintMenuBorder();
+            Utils::PrintMenuHeader("THAY DOI MAT KHAU NGUOI DUNG");
+            Utils::PrintMenuBorder();
+            cout << Utils::RESET;
+
+            cout << Utils::YELLOW << "Dang thay doi mat khau cho nguoi dung ID: " << Utils::CYAN << id
+                 << Utils::YELLOW << " (" << users[i].getName() << ")" << Utils::RESET << "\n\n";
+
+            while (true)
+            {
+                cout << Utils::CYAN << "Nhap Mat Khau moi: " << Utils::RESET;
+                cin.getline(new1, sizeof(new1));
+
+                cout << Utils::CYAN << "Nhap lai Mat Khau moi: " << Utils::RESET;
+                cin.getline(new2, sizeof(new2));
+
+                if (strcmp(new1, new2) == 0)
+                {
+                    users[i].setPassword(new1);
+                    SaveUsersToFile();
+                    found = true;
+
+                    cout << Utils::GREEN << Utils::BOLD;
+                    Utils::PrintMenuBorder();
+                    Utils::PrintMenuLine("THAY DOI MAT KHAU THANH CONG!");
+                    Utils::PrintMenuBorder();
+                    cout << Utils::RESET << endl;
+                    break;
+                }
+                else
+                    cout << Utils::RED << "Mat khau moi khong khop! Vui long thu lai." << Utils::RESET << "\n\n";
+            }
+            break;
+        }
+    }
+
+    if (!found)
+        cout << Utils::RED << "Khong tim thay nguoi dung co ID " << id << Utils::RESET << endl;
 }

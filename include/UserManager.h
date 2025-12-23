@@ -35,7 +35,7 @@ public:
     void DeleteUserByID(int id);
     void UpdateUserByID(int id);
     void UpdateByID(int id);
-   // void SearchUsersByName(UserManager &manager);
+    void ChangeUserPassword(int id);
 
     int GetUserCount() const { return userCount; }
     Person* GetUserByID(int userID);

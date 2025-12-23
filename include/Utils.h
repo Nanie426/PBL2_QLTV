@@ -1,12 +1,25 @@
 #pragma once
 #include <string>
 #include <ctime>
+#include <vector>
 
 using namespace std;
 
 class Utils {
 public:
     static const int MAX_STREAM_SIZE_MANUAL = 100;
+    
+    static const string RESET;
+    static const string RED;
+    static const string GREEN;
+    static const string YELLOW;
+    static const string BLUE;
+    static const string MAGENTA;
+    static const string CYAN;
+    static const string WHITE;
+    static const string BLACK;
+    static const string BOLD;
+    
     static int StringToIntManual(const char* str);
     static int FindSubstringManual(const char* haystack, const char* needle);
     static void CopyStringManual(char* dest, const char* src, size_t dest_size);
@@ -19,6 +32,13 @@ public:
 
     static void ToUpperManual(char* str);
     static void ToLowerManual(char* str);
+
+    static void PrintMenuLine(const string& text, int width = 59);
+    static void PrintMenuHeader(const string& title, int width = 59);
+    static void PrintMenuBorder(int width = 59);
+    static void PrintTableLine(const vector<int>& columnWidths);
+    static void PrintInfoRow(const string& label, const string& value, int totalWidth = 61);
+    static int GetVisibleLength(const string& str);
 
     static const int daysInMonth[13];
     static bool AskReturnToMenu();

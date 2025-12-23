@@ -1,4 +1,5 @@
 #include "BookManager.h"
+#include "Utils.h"
 
 using namespace std;
 
@@ -127,23 +128,26 @@ void BookManager::AddBook()
     char choice;
     do
     {
-        cout << "\n--- THEM SACH MOI ---\n";
+        cout << Utils::GREEN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("ADD NEW BOOK");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+
         string newIDStr = GenerateNextBookID();
         int id = Utils::StringToIntManual(newIDStr.c_str());
-        
-        cout << "ID sach tu dong: " << newIDStr << "\n";
-        
-        // Bỏ qua ký tự '\n' còn sót lại (nếu cần thiết)
-        
-        // Đặt ID và nhận thông tin từ người dùng
+
+        cout << Utils::CYAN << "Auto-generated Book ID: " << Utils::YELLOW << newIDStr << Utils::RESET << "\n\n";
+
+        // Set ID and get information from user
         books[bookCount].setID(id);
         books[bookCount].InputBook();
-        books[bookCount].setBorrowed(false); 
+        books[bookCount].setBorrowed(false);
         bookCount++;
 
         SaveBooksToFile();
 
-        cout << "Ban co muon them sach khac khong? (Y/N): ";
+        cout << Utils::CYAN << "\nAdd another book? (Y/N): " << Utils::RESET;
         cin >> choice;
         cin.ignore(100, '\n');
         if (choice >= 'a' && choice <= 'z')
@@ -157,51 +161,62 @@ void BookManager::ShowAllBooks() const
 {
     if (bookCount == 0)
     {
-        cout << "Chua co sach nao!\n";
+        cout << Utils::YELLOW << "No books found in the library!" << Utils::RESET << "\n";
         return;
     }
 
     // Thiết lập độ rộng cột cho bảng
     const int ID_WIDTH = 8;
-    const int TITLE_WIDTH = 45;
-    const int AUTHOR_WIDTH = 30;
-    // const int PUBLISHER_WIDTH = 30; // Biến này không được dùng trong output
-    const int YEAR_WIDTH = 10;
-    const int QUANTITY_WIDTH = 10;
-    // const int PRICE_WIDTH = 15; // Biến này không được dùng trong output
-    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+    const int TITLE_WIDTH = 30;
+    const int AUTHOR_WIDTH = 20;
+    const int CATEGORY_WIDTH = 15;
+    const int YEAR_WIDTH = 8;
+    const int QUANTITY_WIDTH = 8;
+    const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    cout << "\n========== DANH SACH TAT CA SACH (" << bookCount << " cuon) ==========\n";
+    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
+    int tableWidth = 0;
+    for (int width : columnWidths) {
+        tableWidth += width + 1;
+    }
+    tableWidth -= 1;
 
-    // --- 1. In Tiêu đề Bảng ---
-    cout << setfill(' '); 
+    // In tiêu đề Menu bằng Utils
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(tableWidth);
+    Utils::PrintMenuHeader("DANH SACH TAT CA CAC SACH (" + to_string(bookCount) + " quyển)", tableWidth);
+    Utils::PrintMenuBorder(tableWidth);
+    cout << Utils::RESET;
 
-    cout << left << setw(ID_WIDTH) << "ID"
-         << left << setw(TITLE_WIDTH) << "Ten sach"
-         << left << setw(AUTHOR_WIDTH) << "Tac gia"
-         << left << setw(YEAR_WIDTH) << "Nam XB"
+    // In tiêu đề các cột (Table headers)
+    cout << Utils::BOLD << Utils::YELLOW
+         << left << setw(ID_WIDTH) << "ID" << " "
+         << left << setw(TITLE_WIDTH) << "Ten sach" << " "
+         << left << setw(AUTHOR_WIDTH) << "Tac gia" << " "
+         << left << setw(CATEGORY_WIDTH) << "The loai" << " "
+         << left << setw(YEAR_WIDTH) << "Nam XB" << " "
          << left << setw(QUANTITY_WIDTH) << "So luong"
-         << endl;
+         << Utils::RESET << endl;
 
-    // --- 2. In Dòng Phân cách ---
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Dòng kẻ phân cách (Separator line)
+    Utils::PrintTableLine(columnWidths);
 
-    // --- 3. Duyệt và In Dữ liệu ---
+    // Duyệt và in dữ liệu sách
     for (int i = 0; i < bookCount; ++i)
     {
         const Book& book = books[i];
 
-        // In từng cột (Giả định class Book có các hàm getter tương ứng)
-        cout << left << setw(ID_WIDTH) << book.getID()
-             << left << setw(TITLE_WIDTH) << book.getTitle()
-             << left << setw(AUTHOR_WIDTH) << book.getAuthor()
-             << left << setw(YEAR_WIDTH) << book.getPubYear() // Giả định getPubYear() là đúng
+        cout << left << setw(ID_WIDTH) << book.getID() << " "
+             << left << setw(TITLE_WIDTH) << book.getTitle() << " "
+             << left << setw(AUTHOR_WIDTH) << book.getAuthor() << " "
+             << left << setw(CATEGORY_WIDTH) << book.getCategory() << " "
+             << left << setw(YEAR_WIDTH) << book.getPubYear() << " "
              << left << setw(QUANTITY_WIDTH) << book.getQuantity()
              << endl;
     }
 
-    // --- 4. In Dòng Kết thúc ---
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Dòng kẻ kết thúc (Bottom separator)
+    Utils::PrintTableLine(columnWidths);
 }
 
 // Hàm tìm sách theo ID (Non-const - Dùng để Update)
@@ -242,17 +257,25 @@ void BookManager::ShowStockReport() const
     
     borrowedCopies = totalCopies - availableCopies;
     
-    cout << "\n========== BAO CAO THONG KE SACH ==========\n";
-    cout << "Tong so dau sach: " << bookCount << "\n";
-    cout << "Tong so ban sao (copies): " << totalCopies << "\n";
-    cout << "   - So ban sao CON LAI: " << availableCopies << "\n";
-    cout << "   - So ban sao DANG MUON: " << borrowedCopies << "\n";
-    cout << "===========================================\n";
+    const int WIDTH = 59;
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    Utils::PrintMenuHeader("BAO CAO TON KHO SACH", WIDTH);
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
+
+    Utils::PrintInfoRow("Tong So Dau Sach", to_string(bookCount), WIDTH);
+    Utils::PrintInfoRow("Tong So Ban Sao", to_string(totalCopies), WIDTH);
+    Utils::PrintInfoRow("Ban Sao Con Lai", to_string(availableCopies), WIDTH);
+    Utils::PrintInfoRow("Ban Sao Dang Muon", to_string(borrowedCopies), WIDTH);
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
 }
 
 void BookManager::SearchBookByAuthor(const char* author) const
 {
-    cout << "\n--- KET QUA TIM KIEM TAC GIA: " << author << " ---\n";
     int foundCount = 0;
     
     // Thiết lập độ rộng cột cho bảng
@@ -262,49 +285,62 @@ void BookManager::SearchBookByAuthor(const char* author) const
     const int CATEGORY_WIDTH = 20;
     const int YEAR_WIDTH = 10;
     const int QUANTITY_WIDTH = 10;
-    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+    const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    // In tiêu đề bảng
-    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
-         << left << setw(TITLE_WIDTH) << "Ten sach"
-         << left << setw(AUTHOR_WIDTH) << "Tac gia"
-         << left << setw(CATEGORY_WIDTH) << "The loai"
-         << left << setw(YEAR_WIDTH) << "Nam XB"
+    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
+    int tableWidth = 0;
+    for (int width : columnWidths) {
+        tableWidth += width + 1;
+    }
+    tableWidth -= 1;
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(tableWidth);
+    Utils::PrintMenuHeader("KET QUA TIM KIEM - TAC GIA: " + string(author), tableWidth);
+    Utils::PrintMenuBorder(tableWidth);
+    cout << Utils::RESET;
+
+    // Table headers
+    cout << Utils::BOLD << Utils::YELLOW
+         << left << setw(ID_WIDTH) << "ID" << " "
+         << left << setw(TITLE_WIDTH) << "Ten sach" << " "
+         << left << setw(AUTHOR_WIDTH) << "Tac gia" << " "
+         << left << setw(CATEGORY_WIDTH) << "The loai" << " "
+         << left << setw(YEAR_WIDTH) << "Nam XB" << " "
          << left << setw(QUANTITY_WIDTH) << "So luong"
-         << endl;
+         << Utils::RESET << endl;
 
-    // In dòng phân cách
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Separator line
+    Utils::PrintTableLine(columnWidths);
 
     for (int i = 0; i < bookCount; ++i) {
         
         if (Utils::FindSubstringManual(books[i].getAuthor(), author)) 
         {
             const Book& book = books[i];
-            cout << left << setw(ID_WIDTH) << book.getID()
-                 << left << setw(TITLE_WIDTH) << book.getTitle()
-                 << left << setw(AUTHOR_WIDTH) << book.getAuthor()
-                 << left << setw(CATEGORY_WIDTH) << book.getCategory()
-                 << left << setw(YEAR_WIDTH) << book.getPubYear()
+            cout << left << setw(ID_WIDTH) << book.getID() << " "
+                 << left << setw(TITLE_WIDTH) << book.getTitle() << " "
+                 << left << setw(AUTHOR_WIDTH) << book.getAuthor() << " "
+                 << left << setw(CATEGORY_WIDTH) << book.getCategory() << " "
+                 << left << setw(YEAR_WIDTH) << book.getPubYear() << " "
                  << left << setw(QUANTITY_WIDTH) << book.getQuantity()
                  << endl;
             foundCount++;
         }
     }
     
-    // In dòng kết thúc
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Bottom separator
+    Utils::PrintTableLine(columnWidths);
     
     if (foundCount == 0) {
-        cout << "Khong tim thay sach nao cua tac gia '" << author << "'.\n";
+        cout << Utils::YELLOW << "Khong tim thay sach nao cua tac gia '" << author << "'." << Utils::RESET << "\n";
     } else {
-        cout << "Tim thay " << foundCount << " cuon sach.\n";
+        cout << Utils::GREEN << "Tim thay " << foundCount << " cuon sach." << Utils::RESET << "\n";
     }
 }
 
 void BookManager::SearchBookByCategory(const char* category) const
 {
-    cout << "\n--- KET QUA TIM KIEM THE LOAI: " << category << " ---\n";
     int foundCount = 0;
     
     // Thiết lập độ rộng cột cho bảng
@@ -314,43 +350,57 @@ void BookManager::SearchBookByCategory(const char* category) const
     const int CATEGORY_WIDTH = 20;
     const int YEAR_WIDTH = 10;
     const int QUANTITY_WIDTH = 10;
-    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+    const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    // In tiêu đề bảng
-    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
-         << left << setw(TITLE_WIDTH) << "Ten sach"
-         << left << setw(AUTHOR_WIDTH) << "Tac gia"
-         << left << setw(CATEGORY_WIDTH) << "The loai"
-         << left << setw(YEAR_WIDTH) << "Nam XB"
+    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
+    int tableWidth = 0;
+    for (int width : columnWidths) {
+        tableWidth += width + 1;
+    }
+    tableWidth -= 1;
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(tableWidth);
+    Utils::PrintMenuHeader("KET QUA TIM KIEM - THE LOAI: " + string(category), tableWidth);
+    Utils::PrintMenuBorder(tableWidth);
+    cout << Utils::RESET;
+
+    // Table headers
+    cout << Utils::BOLD << Utils::YELLOW
+         << left << setw(ID_WIDTH) << "ID" << " "
+         << left << setw(TITLE_WIDTH) << "Ten sach" << " "
+         << left << setw(AUTHOR_WIDTH) << "Tac gia" << " "
+         << left << setw(CATEGORY_WIDTH) << "The loai" << " "
+         << left << setw(YEAR_WIDTH) << "Nam XB" << " "
          << left << setw(QUANTITY_WIDTH) << "So luong"
-         << endl;
+         << Utils::RESET << endl;
 
-    // In dòng phân cách
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Separator line
+    Utils::PrintTableLine(columnWidths);
 
     for (int i = 0; i < bookCount; ++i) {
         
         if (containsIgnoreCase(books[i].getCategory(), category)) 
         {
             const Book& book = books[i];
-            cout << left << setw(ID_WIDTH) << book.getID()
-                 << left << setw(TITLE_WIDTH) << book.getTitle()
-                 << left << setw(AUTHOR_WIDTH) << book.getAuthor()
-                 << left << setw(CATEGORY_WIDTH) << book.getCategory()
-                 << left << setw(YEAR_WIDTH) << book.getPubYear()
+            cout << left << setw(ID_WIDTH) << book.getID() << " "
+                 << left << setw(TITLE_WIDTH) << book.getTitle() << " "
+                 << left << setw(AUTHOR_WIDTH) << book.getAuthor() << " "
+                 << left << setw(CATEGORY_WIDTH) << book.getCategory() << " "
+                 << left << setw(YEAR_WIDTH) << book.getPubYear() << " "
                  << left << setw(QUANTITY_WIDTH) << book.getQuantity()
                  << endl;
             foundCount++;
         }
     }
     
-    // In dòng kết thúc
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Bottom separator
+    Utils::PrintTableLine(columnWidths);
     
     if (foundCount == 0) {
-        cout << "Khong tim thay sach nao cua the loai '" << category << "'.\n";
+        cout << Utils::YELLOW << "Khong tim thay sach nao cua the loai '" << category << "'." << Utils::RESET << "\n";
     } else {
-        cout << "Tim thay " << foundCount << " cuon sach.\n";
+        cout << Utils::GREEN << "Tim thay " << foundCount << " cuon sach." << Utils::RESET << "\n";
     }
 }
 
@@ -397,57 +447,68 @@ bool BookManager::containsIgnoreCase(const char* text, const char* keyword) cons
 
 void BookManager::SearchBookByTitle() {
     char keyword[100];
-    cout << "Nhap ten sach can tim: ";
+    cout << Utils::CYAN << "Nhap ten sach can tim: " << Utils::RESET;
     cin.ignore();
     cin.getline(keyword, 100);
     trim(keyword);
 
-    cout << "\n--- KET QUA TIM KIEM TEN SACH: " << keyword << " ---\n";
     int foundCount = 0;
-
-    // Thiết lập độ rộng cột cho bảng
     const int ID_WIDTH = 8;
     const int TITLE_WIDTH = 45;
     const int AUTHOR_WIDTH = 30;
     const int CATEGORY_WIDTH = 20;
     const int YEAR_WIDTH = 10;
     const int QUANTITY_WIDTH = 10;
-    const int TOTAL_WIDTH = ID_WIDTH + TITLE_WIDTH + AUTHOR_WIDTH + CATEGORY_WIDTH + YEAR_WIDTH + QUANTITY_WIDTH;
+    const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    // In tiêu đề bảng
-    cout << setfill(' ') << left << setw(ID_WIDTH) << "ID"
-         << left << setw(TITLE_WIDTH) << "Ten sach"
-         << left << setw(AUTHOR_WIDTH) << "Tac gia"
-         << left << setw(CATEGORY_WIDTH) << "The loai"
-         << left << setw(YEAR_WIDTH) << "Nam XB"
+    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
+    int tableWidth = 0;
+    for (int width : columnWidths) {
+        tableWidth += width + 1;
+    }
+    tableWidth -= 1;
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(tableWidth);
+    Utils::PrintMenuHeader("KET QUA TIM KIEM - TEN SACH: " + string(keyword), tableWidth);
+    Utils::PrintMenuBorder(tableWidth);
+    cout << Utils::RESET;
+
+    // Table headers
+    cout << Utils::BOLD << Utils::YELLOW
+         << left << setw(ID_WIDTH) << "ID" << " "
+         << left << setw(TITLE_WIDTH) << "Ten sach" << " "
+         << left << setw(AUTHOR_WIDTH) << "Tac gia" << " "
+         << left << setw(CATEGORY_WIDTH) << "The loai" << " "
+         << left << setw(YEAR_WIDTH) << "Nam XB" << " "
          << left << setw(QUANTITY_WIDTH) << "So luong"
-         << endl;
+         << Utils::RESET << endl;
 
-    // In dòng phân cách
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Separator line
+    Utils::PrintTableLine(columnWidths);
 
     for (int i = 0; i < bookCount; ++i) {
         const char* title = books[i].getTitle();
         if (containsIgnoreCase(title, keyword)) {
             const Book& book = books[i];
-            cout << left << setw(ID_WIDTH) << book.getID()
-                 << left << setw(TITLE_WIDTH) << book.getTitle()
-                 << left << setw(AUTHOR_WIDTH) << book.getAuthor()
-                 << left << setw(CATEGORY_WIDTH) << book.getCategory()
-                 << left << setw(YEAR_WIDTH) << book.getPubYear()
+            cout << left << setw(ID_WIDTH) << book.getID() << " "
+                 << left << setw(TITLE_WIDTH) << book.getTitle() << " "
+                 << left << setw(AUTHOR_WIDTH) << book.getAuthor() << " "
+                 << left << setw(CATEGORY_WIDTH) << book.getCategory() << " "
+                 << left << setw(YEAR_WIDTH) << book.getPubYear() << " "
                  << left << setw(QUANTITY_WIDTH) << book.getQuantity()
                  << endl;
             foundCount++;
         }
     }
 
-    // In dòng kết thúc
-    cout << setfill('-') << setw(TOTAL_WIDTH) << "" << setfill(' ') << endl;
+    // Bottom separator
+    Utils::PrintTableLine(columnWidths);
 
     if (!foundCount) {
-        cout << "Khong tim thay sach phu hop.\n";
+        cout << Utils::YELLOW << "Khong tim thay sach phu hop." << Utils::RESET << "\n";
     } else {
-        cout << "Tim thay " << foundCount << " cuon sach.\n";
+        cout << Utils::GREEN << "Tim thay " << foundCount << " cuon sach." << Utils::RESET << "\n";
     }
 }
 
@@ -501,7 +562,7 @@ void BookManager::DeleteBookByID(int id)
 
         if (choice == 'Y')
         {
-            cout << "Nhap ID sach can xoa: ";
+            cout << Utils::CYAN << "Enter Book ID to delete: " << Utils::RESET;
             if (!(cin >> id))
             {
                 cin.clear();
@@ -515,7 +576,7 @@ void BookManager::DeleteBookByID(int id)
 void BookManager::ShowStockReportPerBook() const
 {
     if (bookCount == 0) {
-        cout << "Thu vien chua co sach nao!\n";
+        cout << Utils::YELLOW << "No books in the library yet!" << Utils::RESET << "\n";
         return;
     }
 
@@ -541,56 +602,88 @@ void BookManager::ShowStockReportPerBook() const
 
 void BookManager::UpdateBookByID(int id)
 {
-    // Sử dụng hàm non-const GetBookByID để lấy con trỏ có thể thay đổi
-    Book* book = GetBookByID(id); 
-    if (!book) {
-        cout << "Khong tim thay sach co ID: " << id << "\n";
+    Book* book = GetBookByID(id);
+    if (!book)
+    {
+        cout << Utils::RED
+             << "Khong tim thay sach co ID: " << id
+             << Utils::RESET << "\n";
         return;
     }
 
-    cout << "\n--- CAP NHAT SACH ID: " << id << " ---\n";
-    cout << "--- THONG TIN CU ---\n";
-    book->Show(); // Hiển thị thông tin cũ
-    cout << "--------------------\n";
-
+    const int WIDTH = 70;
     char input[200];
-    
-    // 1. Cập nhật Tên sách (Title)
-    cout << "Nhap Ten sach moi: ";
-    cin.ignore(); // Xử lý ký tự newline còn sót
+
+    // ===== THONG TIN HIEN TAI =====
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    Utils::PrintMenuHeader("THONG TIN HIEN TAI", WIDTH);
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
+
+    Utils::PrintInfoRow("ID sach", to_string(book->getID()), WIDTH+2);
+    Utils::PrintInfoRow("Ten sach", book->getTitle(), WIDTH+2);
+    Utils::PrintInfoRow("Tac gia", book->getAuthor(), WIDTH+2);
+    Utils::PrintInfoRow("Nam xuat ban", to_string(book->getPubYear()), WIDTH+2);
+    Utils::PrintInfoRow("The loai", book->getCategory(), WIDTH+2);
+    Utils::PrintInfoRow("So luong", to_string(book->getQuantity()), WIDTH+2);
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET << "\n";
+    // ===== CAP NHAT TEN SACH =====
+    cout << Utils::YELLOW << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    Utils::PrintMenuHeader("CAP NHAT THONG TIN SACH", WIDTH);
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
+    cout << Utils::CYAN << Utils::BOLD;
+    cout << "Nhap ten sach moi (Enter de bo qua): ";
+    // cin.ignore(1024);
     cin.getline(input, sizeof(input));
-    if (input[0] != '\0') {
+    if (input[0] != '\0')
         book->setTitle(input);
-    }
-    
-    // 2. Cập nhật Tác giả (Author)
-    cout << "Nhap Tac gia moi: ";
+
+
+    // ===== CAP NHAT TAC GIA =====
+    cout << "Nhap ten tac gia moi (Enter de bo qua): ";
     cin.getline(input, sizeof(input));
-    if (input[0] != '\0') {
+    if (input[0] != '\0')
         book->setAuthor(input);
-    }
-    
-    // 3. Cập nhật Năm xuất bản
-    cout << "Nhap Nam xuat ban moi: ";
+
+
+
+    // ===== CAP NHAT NAM XUAT BAN =====
+    cout << "Nhap nam xuat ban moi (Enter de bo qua): ";
     cin.getline(input, sizeof(input));
-    if (input[0] != '\0') {
+    if (input[0] != '\0')
+    {
         int newYear = Utils::CharArrayToIntManual(input);
-        if (newYear > 0) { 
-            book->setPubYear(newYear); // Sửa: Giả định hàm setPubYear() có sẵn
-        } else {
-            cout << "Canh bao: Nam nhap vao khong hop le hoac <= 0. Giu nguyen gia tri cu.\n";
-        }
-    }
-    
-    // 4. Cập nhật Thể loại (Category)
-    cout << "Nhap The loai moi: ";
-    cin.getline(input, sizeof(input));
-    if (input[0] != '\0') {
-        book->setCategory(input);
+        if (newYear > 0)
+            book->setPubYear(newYear);
+        else
+            cout << Utils::YELLOW
+                 << "Canh bao: Nam xuat ban khong hop le!"
+                 << Utils::RESET << "\n";
     }
 
-    // (Bạn có thể cần thêm cập nhật Quantity/TotalQuantity)
-    
-    cout << "\nCap nhat thong tin sach thanh cong!\n";
-    SaveBooksToFile(); 
+
+    // ===== CAP NHAT THE LOAI =====
+    cout << "Nhap the loai moi (Enter de bo qua): ";
+    cin.getline(input, sizeof(input));
+    if (input[0] != '\0')
+        book->setCategory(input);
+
+   
+    // ===== HOAN TAT =====
+    SaveBooksToFile();
+
+    cout << Utils::GREEN << Utils::BOLD
+         << "CAP NHAT THONG TIN SACH THANH CONG!"
+         << Utils::RESET << "\n";
+
+    cout << Utils::CYAN
+         << "Nhan Enter de quay lai..."
+         << Utils::RESET;
+    cin.get();
 }

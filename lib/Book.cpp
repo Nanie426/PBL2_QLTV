@@ -1,4 +1,5 @@
-#include "Book.h"   
+#include "Book.h"
+#include "Utils.h"   
 int Book::getYear() const
 {
     return year;
@@ -75,14 +76,24 @@ void Book::setBorrowed(bool b) { isBorrowed = b; }
 
 void Book::Show() const 
 {
-    cout << "ID: " << bookID << endl;
-    cout << "Ten sach: " << title << endl;
-    cout << "Tac gia: " << author << endl;
-    cout << "The loai: " << category << endl;
-    cout << "Nam xuat ban: " << pubYear << endl;
-    cout << "So luong: " << quantity << endl;
-    cout << "Trang thai: " << (isBorrowed ? "Da muon" : "Con trong") << endl;
-    cout << "\n";
+    const int WIDTH = 59;
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    Utils::PrintMenuHeader("THONG TIN SACH", WIDTH);
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
+
+    Utils::PrintInfoRow("ID", to_string(bookID), WIDTH+2);
+    Utils::PrintInfoRow("Ten Sach", title, WIDTH+2);
+    Utils::PrintInfoRow("Tac Gia", author, WIDTH+2);
+    Utils::PrintInfoRow("The Loai", category, WIDTH+2);
+    Utils::PrintInfoRow("Nam Xuat Ban", to_string(pubYear), WIDTH+2);
+    Utils::PrintInfoRow("So Luong", to_string(quantity), WIDTH+2);
+    Utils::PrintInfoRow("Trang Thai", (isBorrowed ? "Da muon" : "Con trong"), WIDTH+2);
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET << endl;
 }
 
 void Book::InputBook() 
@@ -103,7 +114,7 @@ void Book::InputBook()
     cin >> quantity;
 
     isBorrowed = false;
-    cout << "Them sach thanh cong!\n";
+    cout << Utils::GREEN << "Them sach thanh cong!\n" << Utils::RESET;
 }
 
 void Book::WriteToFile(ostream& out) const 

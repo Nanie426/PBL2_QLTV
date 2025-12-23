@@ -137,7 +137,7 @@ void BookManager::AddBook()
         string newIDStr = GenerateNextBookID();
         int id = Utils::StringToIntManual(newIDStr.c_str());
 
-        cout << Utils::CYAN << "Auto-generated Book ID: " << Utils::YELLOW << newIDStr << Utils::RESET << "\n\n";
+        cout << Utils::CYAN << "ID sach: " << Utils::YELLOW << newIDStr << Utils::RESET << "\n\n";
 
         // Set ID and get information from user
         books[bookCount].setID(id);
@@ -147,7 +147,7 @@ void BookManager::AddBook()
 
         SaveBooksToFile();
 
-        cout << Utils::CYAN << "\nAdd another book? (Y/N): " << Utils::RESET;
+        cout << Utils::CYAN << "\nBan co muon them sach khac khong? (Y/N): " << Utils::RESET;
         cin >> choice;
         cin.ignore(100, '\n');
         if (choice >= 'a' && choice <= 'z')
@@ -156,16 +156,14 @@ void BookManager::AddBook()
     } while (choice == 'Y');
 }
 
-// Hàm hiển thị tất cả sách (Đã giữ lại logic bảng của bạn)
 void BookManager::ShowAllBooks() const
 {
     if (bookCount == 0)
     {
-        cout << Utils::YELLOW << "No books found in the library!" << Utils::RESET << "\n";
+        cout << Utils::YELLOW << "Khong tim thay sach!" << Utils::RESET << "\n";
         return;
     }
 
-    // Thiết lập độ rộng cột cho bảng
     const int ID_WIDTH = 8;
     const int TITLE_WIDTH = 30;
     const int AUTHOR_WIDTH = 20;
@@ -174,21 +172,18 @@ void BookManager::ShowAllBooks() const
     const int QUANTITY_WIDTH = 8;
     const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
     int tableWidth = 0;
     for (int width : columnWidths) {
         tableWidth += width + 1;
     }
     tableWidth -= 1;
 
-    // In tiêu đề Menu bằng Utils
     cout << Utils::CYAN << Utils::BOLD;
     Utils::PrintMenuBorder(tableWidth);
     Utils::PrintMenuHeader("DANH SACH TAT CA CAC SACH (" + to_string(bookCount) + " quyển)", tableWidth);
     Utils::PrintMenuBorder(tableWidth);
     cout << Utils::RESET;
 
-    // In tiêu đề các cột (Table headers)
     cout << Utils::BOLD << Utils::YELLOW
          << left << setw(ID_WIDTH) << "ID" << " "
          << left << setw(TITLE_WIDTH) << "Ten sach" << " "
@@ -198,10 +193,8 @@ void BookManager::ShowAllBooks() const
          << left << setw(QUANTITY_WIDTH) << "So luong"
          << Utils::RESET << endl;
 
-    // Dòng kẻ phân cách (Separator line)
     Utils::PrintTableLine(columnWidths);
 
-    // Duyệt và in dữ liệu sách
     for (int i = 0; i < bookCount; ++i)
     {
         const Book& book = books[i];
@@ -215,11 +208,9 @@ void BookManager::ShowAllBooks() const
              << endl;
     }
 
-    // Dòng kẻ kết thúc (Bottom separator)
     Utils::PrintTableLine(columnWidths);
 }
 
-// Hàm tìm sách theo ID (Non-const - Dùng để Update)
 Book* BookManager::GetBookByID(int id)
 {
     for (int i = 0; i < bookCount; ++i)
@@ -230,7 +221,6 @@ Book* BookManager::GetBookByID(int id)
     return nullptr;
 }
 
-// Hàm tìm sách theo ID (Const - Dùng để Show/Read Only)
 const Book* BookManager::GetBookByID(int id) const
 {
     for (int i = 0; i < bookCount; ++i)
@@ -241,8 +231,6 @@ const Book* BookManager::GetBookByID(int id) const
     return nullptr;
 }
 
-
-// CÁC HÀM KHÁC (Được giữ nguyên)
 
 void BookManager::ShowStockReport() const
 {
@@ -278,7 +266,6 @@ void BookManager::SearchBookByAuthor(const char* author) const
 {
     int foundCount = 0;
     
-    // Thiết lập độ rộng cột cho bảng
     const int ID_WIDTH = 8;
     const int TITLE_WIDTH = 45;
     const int AUTHOR_WIDTH = 30;
@@ -287,7 +274,6 @@ void BookManager::SearchBookByAuthor(const char* author) const
     const int QUANTITY_WIDTH = 10;
     const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
     int tableWidth = 0;
     for (int width : columnWidths) {
         tableWidth += width + 1;
@@ -300,7 +286,6 @@ void BookManager::SearchBookByAuthor(const char* author) const
     Utils::PrintMenuBorder(tableWidth);
     cout << Utils::RESET;
 
-    // Table headers
     cout << Utils::BOLD << Utils::YELLOW
          << left << setw(ID_WIDTH) << "ID" << " "
          << left << setw(TITLE_WIDTH) << "Ten sach" << " "
@@ -310,7 +295,6 @@ void BookManager::SearchBookByAuthor(const char* author) const
          << left << setw(QUANTITY_WIDTH) << "So luong"
          << Utils::RESET << endl;
 
-    // Separator line
     Utils::PrintTableLine(columnWidths);
 
     for (int i = 0; i < bookCount; ++i) {
@@ -343,7 +327,6 @@ void BookManager::SearchBookByCategory(const char* category) const
 {
     int foundCount = 0;
     
-    // Thiết lập độ rộng cột cho bảng
     const int ID_WIDTH = 8;
     const int TITLE_WIDTH = 45;
     const int AUTHOR_WIDTH = 30;
@@ -352,7 +335,6 @@ void BookManager::SearchBookByCategory(const char* category) const
     const int QUANTITY_WIDTH = 10;
     const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
     int tableWidth = 0;
     for (int width : columnWidths) {
         tableWidth += width + 1;
@@ -639,7 +621,7 @@ void BookManager::UpdateBookByID(int id)
     cout << Utils::RESET;
     cout << Utils::CYAN << Utils::BOLD;
     cout << "Nhap ten sach moi (Enter de bo qua): ";
-    // cin.ignore(1024);
+    cin.ignore(1024, '\n');
     cin.getline(input, sizeof(input));
     if (input[0] != '\0')
         book->setTitle(input);

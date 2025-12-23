@@ -1,4 +1,4 @@
-#include "login.h"
+#include "Login.h"
 #include "Utils.h"
 
 
@@ -31,7 +31,7 @@ bool Login::DangNhap(const string& inputID, const string& inputPassword, const s
     if (!file.is_open()) return false;
 
     string line;
-    if (filename == "admin.txt") getline(file, line);  // Skip header for admin.txt
+    if (filename == "admin.txt") getline(file, line); 
 
     while (getline(file, line))
     {        

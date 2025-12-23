@@ -136,19 +136,16 @@ void UserManager::AddUser()
 
         users[userCount].setID(tempID);
 
-        // Input user details with nice formatting
         cout << Utils::BOLD << "Hay nhap thong tin:" << Utils::RESET << "\n";
         cout << Utils::CYAN << string(59, '-') << Utils::RESET << "\n";
         users[userCount].InputUserDetails();
 
-        // Generate password automatically
         string lastName = users[userCount].getLastName();
         string dob = users[userCount].getDate();
         string newPassword = Utils::GeneratePassword(lastName, dob);
 
         users[userCount].setPassword(newPassword.c_str());
 
-        // Success message with nice formatting
         cout << Utils::GREEN << Utils::BOLD;
         Utils::PrintMenuBorder();
         Utils::PrintMenuLine("THEM NGUOI DUNG THANH CONG!");
@@ -272,7 +269,7 @@ void UserManager::DeleteUserByID(int id)
                 userCount--;
                 SaveUsersToFile();
 
-                cout << Utils::GREEN << "XOA NGUOI DUNG THANH CONG!" << Utils::RESET << endl;
+                cout << Utils::GREEN << Utils::BOLD << "XOA NGUOI DUNG THANH CONG!" << Utils::RESET << endl;
 
                 cout << Utils::RESET << endl;
             }
@@ -356,8 +353,7 @@ void UserManager::UpdateByID(int id)
         if (!found)
             cout << "Khong tim thay nguoi dung co ID " << id << endl;
 
-        // vòng lặp này thực ra vô nghĩa → bạn có thể xoá luôn
-        // nhưng giữ nguyên theo code bạn gửi
+       
     } while (choice == 'Y');
 }
 
@@ -393,10 +389,7 @@ void UserManager::ChangeUserPassword(int id)
                     SaveUsersToFile();
                     found = true;
 
-                    cout << Utils::GREEN << Utils::BOLD;
-                    Utils::PrintMenuBorder();
-                    Utils::PrintMenuLine("THAY DOI MAT KHAU THANH CONG!");
-                    Utils::PrintMenuBorder();
+                    cout << Utils::GREEN << Utils::BOLD << "THAY DOI MAT KHAU THANH CONG!";
                     cout << Utils::RESET << endl;
                     break;
                 }

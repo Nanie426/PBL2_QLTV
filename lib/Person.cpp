@@ -1,5 +1,6 @@
 #include "Person.h"
 #include "Utils.h"
+#include <limits>
 
 // Lấy họ (từ cuối)
 string Person::getLastName() const {
@@ -336,8 +337,10 @@ void Person::UpdateByUser()
     cout << Utils::RESET;
 
     // ===== TEN =====
-    cout << Utils::YELLOW << "Ten hien tai: " << name << Utils::RESET<<"\n";
-    cout << Utils::CYAN << "Nhap ten moi (Enter de bo qua): " << Utils::RESET;
+    cout << Utils::YELLOW << "Ten hien tai: " << name << Utils::RESET;
+    cout << Utils::CYAN << "\nNhap ten moi (Enter de bo qua): " << Utils::RESET;
+    
+    //cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin.getline(input, sizeof(input));
     if (input[0] != '\0')
         setName(input);

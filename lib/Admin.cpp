@@ -26,7 +26,7 @@ void Admin::UserMenu()
         Utils::PrintMenuLine("1. Them nguoi dung moi");
         Utils::PrintMenuLine("2. Xem tat ca nguoi dung");
         Utils::PrintMenuLine("3. Chinh sua thong tin nguoi dung");
-        Utils::PrintMenuLine("4. Thai doi mat khau nguoi dung");
+        Utils::PrintMenuLine("4. Thay doi mat khau nguoi dung");
         Utils::PrintMenuLine("5. Xoa nguoi dung");
         Utils::PrintMenuLine("0. Quay lai menu chinh");
         Utils::PrintMenuLine("");
@@ -72,7 +72,7 @@ void Admin::UserMenu()
             Utils::AskReturnToMenu();
         }
         else if (choice == 0)
-            ; // exit loop
+            ; 
         else
             cout << "Lua chon khong hop le!\n";
 
@@ -162,7 +162,6 @@ void Admin::BookMenu()
                     const Book *bookPtr = bookManager.GetBookByID(bookID);
                     if (bookPtr)
                     {
-                        // Thiết lập độ rộng cột cho bảng
                         const int ID_WIDTH = 8;
                         const int TITLE_WIDTH = 45;
                         const int AUTHOR_WIDTH = 30;
@@ -173,11 +172,10 @@ void Admin::BookMenu()
 
                         cout << Utils::CYAN << Utils::BOLD;
                         Utils::PrintMenuBorder();
-                        Utils::PrintMenuHeader("SEARCH RESULT - BOOK ID: " + to_string(bookID));
+                        Utils::PrintMenuHeader("KET QUA TIM KIEM - ID: " + to_string(bookID));
                         Utils::PrintMenuBorder();
                         cout << Utils::RESET;
 
-                        // Table headers
                         cout << Utils::BOLD << Utils::YELLOW
                              << left << setw(ID_WIDTH) << "ID" << " "
                              << left << setw(TITLE_WIDTH) << "Ten sach" << " "
@@ -187,10 +185,8 @@ void Admin::BookMenu()
                              << left << setw(QUANTITY_WIDTH) << "So luong"
                              << Utils::RESET << endl;
 
-                        // Separator line
                         Utils::PrintTableLine(columnWidths);
 
-                        // In dữ liệu
                         cout << left << setw(ID_WIDTH) << bookPtr->getID() << " "
                              << left << setw(TITLE_WIDTH) << bookPtr->getTitle() << " "
                              << left << setw(AUTHOR_WIDTH) << bookPtr->getAuthor() << " "
@@ -199,7 +195,6 @@ void Admin::BookMenu()
                              << left << setw(QUANTITY_WIDTH) << bookPtr->getQuantity()
                              << endl;
 
-                        // Bottom separator
                         Utils::PrintTableLine(columnWidths);
 
                         cout << Utils::GREEN << "Tim thay 1 cuon sach." << Utils::RESET << "\n";
@@ -236,7 +231,7 @@ void Admin::BookMenu()
             Utils::AskReturnToMenu();
         }
         else if (choice == 0)
-            ; // exit loop
+            ; 
         else
             cout << "Lua chon khong hop le!\n";
 

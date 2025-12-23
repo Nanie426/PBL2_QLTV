@@ -1,8 +1,8 @@
-124,Mat biec,Nguyen Nhat Anh,truyen,1990,4,0
-125,Toi thay hoa vang tren co xanh,Nguyen Nhat Anh,truyen,2010,3,0
+124,Mat biec,Nguyen Nhat Anh,truyen,1990,2,0
+125,Toi thay hoa vang tren co xanh,Nguyen Nhat Anh,truyen,2010,2,0
 126,Co gai den tu hom qua,Nguyen Nhat Anh,truyen,1989,0,0
 127,Ngoi khoc tren cay,Nguyen Nhat Anh,truyen,2013,1,0
-129,Thang quy nho,Nguyen Nhat Anh,truyen,1990,1,0
+129,Thang quy nho,Nguyen Nhat Anh,truyen,1990,0,0
 130,Quan go di len,Nguyen Nhat Anh,truyen,2008,0,0
 131,Kinh van hoa (Tap 1),Nguyen Nhat Anh,truyen dai ky,1995,0,0
 132,Cho xin mot ve di tuoi tho,Nguyen Nhat Anh,truyen,2008,0,0

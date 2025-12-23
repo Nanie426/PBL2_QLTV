@@ -30,10 +30,13 @@ bool Login::DangNhap(const string& inputID, const string& inputPassword, const s
     if (!file.is_open()) return false;
 
     string line;
-    getline(file, line);
+    if (filename == "admin.txt") getline(file, line);  // Skip header for admin.txt
 
     while (getline(file, line))
-    {
+    {        
+        if (line.size() >= 3 && (unsigned char)line[0] == 0xEF && (unsigned char)line[1] == 0xBB && (unsigned char)line[2] == 0xBF) {
+            line = line.substr(3);
+        }
         stringstream ss(line);
         string segment;
         string fields[2];

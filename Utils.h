@@ -16,7 +16,6 @@ public:
     static void GetCurrentDate(char* buffer, size_t buffer_size);
     static int CompareDates(const char* date1, const char* date2);
     static void GetCurrentDateManual(char* buffer, size_t buffer_size);
-    static int CalculateDateDifference(const char* date1, const char* date2);
 
     static void ToUpperManual(char* str);
     static void ToLowerManual(char* str);
@@ -29,7 +28,6 @@ public:
     static tm AddDays(const tm& date, int days);
     static int CompareDates(const tm& date1, const tm& date2);
 
-    static bool IsLeap(int year);
     static long long GetTotalDays(const char* date);
 
     static  string GeneratePassword(const  string& lastName, const  string& dob);

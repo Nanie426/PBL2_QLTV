@@ -23,9 +23,9 @@ private:
     void UserMenu();
     void BookMenu();
     void BorrowBookMenu();
-    void StatisticsMenu(); // THÊM MENU THỐNG KÊ
+    void StatisticsMenu(); 
 
 public:
-    Admin(); // THÊM CONSTRUCTOR
+    Admin(); 
     void Menu();
 };

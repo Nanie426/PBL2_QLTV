@@ -30,15 +30,15 @@ void StatisticsManager::ShowStatisticsMenu() {
 
         switch (statChoice) {
         case 1:
-            ThongKeSach();
+            BookStatistics();
             Utils::AskReturnToMenu();
             break;
         case 2:
-            ThongKeDocGia();
+            ReaderStatistics();
             Utils::AskReturnToMenu();
             break;
         case 3:
-            ThongKeMuonTra();
+            BorrowingReturnStatistics();
             Utils::AskReturnToMenu();
             break;
         case 0:
@@ -51,7 +51,7 @@ void StatisticsManager::ShowStatisticsMenu() {
     } while (statChoice != 0);
 }
 
-void StatisticsManager::ThongKeSach() {
+void StatisticsManager::BookStatistics() {
     int choice;
 
     do {
@@ -72,11 +72,11 @@ void StatisticsManager::ThongKeSach() {
         cin.ignore(100, '\n');
 
         switch (choice) {
-        case 1: ThongKeTongQuanSach(); Utils::AskReturnToMenu(); break;
-        case 2: ThongKeTheoTheLoai(); Utils::AskReturnToMenu(); break;
-        case 3: ThongKeTheoTacGia(); Utils::AskReturnToMenu(); break;
-        case 4: ThongKeTinhTrangMuon(); Utils::AskReturnToMenu(); break;
-        case 5: ThongKeSachMuonNhieu(); Utils::AskReturnToMenu(); break;
+        case 1: OverallBookStatistics(); Utils::AskReturnToMenu(); break;
+        case 2: CategoryStatistics(); Utils::AskReturnToMenu(); break;
+        case 3: AuthorStatistics(); Utils::AskReturnToMenu(); break;
+        case 4: BorrowingStatusStatistics(); Utils::AskReturnToMenu(); break;
+        case 5: TopBorrowedBooksStatistics(); Utils::AskReturnToMenu(); break;
         case 0: cout << "Quay lai menu thong ke.\n"; break;
         default: cout << "Lua chon khong hop le!\n";
         }
@@ -89,7 +89,7 @@ void StatisticsManager::ThongKeSach() {
     } while (choice != 0);
 }
 
-void StatisticsManager::ThongKeTongQuanSach() {
+void StatisticsManager::OverallBookStatistics() {
     cout << "\n=== TONG QUAN SACH ===\n";
 
     bookManager.ShowStockReport();
@@ -118,7 +118,7 @@ void StatisticsManager::ThongKeTongQuanSach() {
     }
 }
 
-void StatisticsManager::ThongKeTheoTheLoai() {
+void StatisticsManager::CategoryStatistics() {
     cout << "\n=== THONG KE SACH THEO THE LOAI ===\n";
 
     struct CategoryStat {
@@ -184,7 +184,7 @@ void StatisticsManager::ThongKeTheoTheLoai() {
     cout << left << setw(25) << "TONG CONG" << setw(15) << totalCopies << "100%\n";
 }
 
-void StatisticsManager::ThongKeTheoTacGia() {
+void StatisticsManager::AuthorStatistics() {
     cout << "\n=== THONG KE SACH THEO TAC GIA ===\n";
 
     struct AuthorStat {
@@ -251,7 +251,7 @@ void StatisticsManager::ThongKeTheoTacGia() {
     cout << left << setw(30) << "TONG CONG" << setw(15) << totalBooks << "100%\n";
 }
 
-void StatisticsManager::ThongKeTinhTrangMuon() {
+void StatisticsManager::BorrowingStatusStatistics() {
     cout << "\n=== TINH TRANG MUON SACH HIEN TAI ===\n";
 
     struct BookBorrow {
@@ -322,7 +322,7 @@ void StatisticsManager::ThongKeTinhTrangMuon() {
     cout << setfill('-') << setw(68) << "-" << setfill(' ') << "\n";
 }
 
-void StatisticsManager::ThongKeSachMuonNhieu() {
+void StatisticsManager::TopBorrowedBooksStatistics() {
     cout << "\n=== TOP SACH DUOC MUON NHIEU NHAT ===\n";
 
     struct BookBorrow {
@@ -393,7 +393,7 @@ void StatisticsManager::ThongKeSachMuonNhieu() {
     cout << setfill('-') << setw(78) << "-" << setfill(' ') << "\n";
 }
 
-void StatisticsManager::ThongKeDocGia() {
+void StatisticsManager::ReaderStatistics() {
     cout << "\n=== THONG KE DOC GIA ===\n";
 
     const Person* users = userManager.GetAllUsers();
@@ -425,7 +425,7 @@ void StatisticsManager::ThongKeDocGia() {
     }
 }
 
-void StatisticsManager::ThongKeMuonTra() {
+void StatisticsManager::BorrowingReturnStatistics() {
     cout << "\n=== THONG KE MUON/TRA ===\n";
 
     int choice;
@@ -451,7 +451,7 @@ void StatisticsManager::ThongKeMuonTra() {
     }
 }
 
-void StatisticsManager::BaoCaoTongHop() {
+void StatisticsManager::ComprehensiveReport() {
     cout << "\n=== BAO CAO TONG HOP ===\n";
 
     const Person* users = userManager.GetAllUsers();

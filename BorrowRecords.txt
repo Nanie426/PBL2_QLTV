@@ -18,3 +18,39 @@ Ten sach: Mua lac
 Ngay muon: 29/11/2025
 ----------------------------------------
 
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 09:29:14
+ID nguoi dung: 2013
+Ten nguoi dung: Pham Thu Trang
+ID sach: 124
+Ten sach: Mat biec
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 09:29:34
+ID nguoi dung: 2014
+Ten nguoi dung: Tran Anh Tuan
+ID sach: 125
+Ten sach: Toi thay hoa vang tren co xanh
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 09:35:55
+ID nguoi dung: 2013
+Ten nguoi dung: Pham Thu Trang
+ID sach: 124
+Ten sach: Mat biec
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 09:36:24
+ID nguoi dung: 2015
+Ten nguoi dung: Vo Kim Anh
+ID sach: 129
+Ten sach: Thang quy nho
+Ngay muon: 23/12/2025
+----------------------------------------
+

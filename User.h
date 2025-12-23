@@ -5,6 +5,7 @@
 #include "UserManager.h"
 #include "BookManager.h"
 #include <vector>
+#include <map>
 
 class User : public Person
 {
@@ -13,6 +14,7 @@ private:
 
     void LoadTransactionHistory();
     void SaveTransactionHistory() const;
+    std::map<int, std::vector<BorrowedItem>> LoadAllTransactionHistories() const;
     int FindActiveBorrowIndex(int bookID) const;
 
 public:

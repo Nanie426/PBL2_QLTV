@@ -1,4 +1,5 @@
 #include "UserManager.h"
+#include <cstring>
 
 string UserManager::GenerateNextUserID()
 {
@@ -58,6 +59,11 @@ void UserManager::LoadUsersFromFile()
     char line[300];
     while (inFile.getline(line, sizeof(line)))
     {
+        // Strip BOM if present
+        if (strlen(line) >= 3 && (unsigned char)line[0] == 0xEF && (unsigned char)line[1] == 0xBB && (unsigned char)line[2] == 0xBF) {
+            memmove(line, line + 3, strlen(line) - 3 + 1);
+        }
+
         char fields[6][100];
         int fieldCount = Utils::SplitLineManual(line, fields, 6, ',');
 

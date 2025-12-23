@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <algorithm>
+#include <map>
 
 using namespace std;
 
@@ -39,26 +40,106 @@ void User::SaveTransactionHistory() const
 {
     if (getID() == 0) return;
 
-    string filename = "user_history_" + to_string(getID()) + ".txt";
+    const string filename = "users_history.txt";
+    
+    // Load all existing histories
+    map<int, vector<BorrowedItem>> allHistories = LoadAllTransactionHistories();
+    
+    // Update the history for this user
+    allHistories[getID()] = transactionHistory;
+    
+    // Save all histories back to file
     ofstream outFile(filename);
-
     if (!outFile.is_open())
     {
         cerr << "Loi: Khong the mo tep de luu lich su giao dich: " << filename << endl;
         return;
     }
 
-    outFile << transactionHistory.size() << "\n";
-
-    for (const auto& item : transactionHistory)
+    for (const auto& userHistory : allHistories)
     {
-        outFile << item.getBookID() << ","
-                << item.getBorrowDate() << ","
-                << item.getReturnDate() << ","
-                << item.getIsReturned() << "\n";
+        int userID = userHistory.first;
+        const vector<BorrowedItem>& history = userHistory.second;
+        
+        outFile << "USER_" << userID << ":" << history.size() << "\n";
+        
+        for (const auto& item : history)
+        {
+            outFile << item.getBookID() << ","
+                    << item.getBorrowDate() << ","
+                    << item.getReturnDate() << ","
+                    << item.getIsReturned() << "\n";
+        }
     }
 
     outFile.close();
+}
+
+map<int, vector<BorrowedItem>> User::LoadAllTransactionHistories() const
+{
+    map<int, vector<BorrowedItem>> allHistories;
+    const string filename = "users_history.txt";
+    
+    ifstream inFile(filename);
+    if (!inFile.is_open())
+    {
+        return allHistories;
+    }
+
+    string line;
+    while (getline(inFile, line))
+    {
+        if (line.find("USER_") == 0)
+        {
+            size_t colonPos = line.find(':');
+            if (colonPos != string::npos)
+            {
+                string userIDStr = line.substr(5, colonPos - 5);
+                string countStr = line.substr(colonPos + 1);
+                
+                int userID = 0;
+                int count = 0;
+                try {
+                    userID = stoi(userIDStr);
+                    count = stoi(countStr);
+                } catch (...) {
+                    continue;
+                }
+                
+                vector<BorrowedItem> history;
+                for (int i = 0; i < count && getline(inFile, line); ++i)
+                {
+                    stringstream ss(line);
+                    string bookID_str, borrowDate_str, returnDate_str, isReturned_str;
+
+                    if (getline(ss, bookID_str, ',') && 
+                        getline(ss, borrowDate_str, ',') && 
+                        getline(ss, returnDate_str, ',') && 
+                        getline(ss, isReturned_str))
+                    {
+                        try
+                        {
+                            int bookID = stoi(bookID_str);
+                            bool isReturned = (stoi(isReturned_str) != 0);
+
+                            history.emplace_back(
+                                bookID, 
+                                borrowDate_str, 
+                                returnDate_str, 
+                                isReturned
+                            );
+                        }
+                        catch (...) {}
+                    }
+                }
+                
+                allHistories[userID] = history;
+            }
+        }
+    }
+
+    inFile.close();
+    return allHistories;
 }
 
 void User::LoadTransactionHistory()
@@ -68,58 +149,16 @@ void User::LoadTransactionHistory()
         return;
     }
 
-    string filename = "user_history_" + to_string(getID()) + ".txt";
-    ifstream inFile(filename);
-
-    if (!inFile.is_open())
+    map<int, vector<BorrowedItem>> allHistories = LoadAllTransactionHistories();
+    auto it = allHistories.find(getID());
+    if (it != allHistories.end())
+    {
+        transactionHistory = it->second;
+    }
+    else
     {
         transactionHistory.clear();
-        return;
     }
-
-    string line;
-    int totalTransactions = 0;
-
-    if (getline(inFile, line))
-    {
-        try {
-            totalTransactions = stoi(line);
-        } catch (...) {
-            totalTransactions = 0;
-        }
-    }
-
-    transactionHistory.clear();
-    int loadedCount = 0;
-
-    while (getline(inFile, line) && loadedCount < totalTransactions)
-    {
-        stringstream ss(line);
-        string bookID_str, borrowDate_str, returnDate_str, isReturned_str;
-
-        if (getline(ss, bookID_str, ',') && 
-            getline(ss, borrowDate_str, ',') && 
-            getline(ss, returnDate_str, ',') && 
-            getline(ss, isReturned_str))
-        {
-            try
-            {
-                int bookID = stoi(bookID_str);
-                bool isReturned = (stoi(isReturned_str) != 0);
-
-                transactionHistory.emplace_back(
-                    bookID, 
-                    borrowDate_str, 
-                    returnDate_str, 
-                    isReturned
-                );
-                loadedCount++;
-            }
-            catch (...) {}
-        }
-    }
-
-    inFile.close();
 }
 
 User::User() : Person()
@@ -197,6 +236,11 @@ void User::LoadUserByID(const string &id)
 
     while (getline(file, line))
     {
+        // Strip BOM if present
+        if (line.size() >= 3 && (unsigned char)line[0] == 0xEF && (unsigned char)line[1] == 0xBB && (unsigned char)line[2] == 0xBF) {
+            line = line.substr(3);
+        }
+
         stringstream ss(line);
 
         string userID, password_str, name_str, dob_str, phone_str, email_str;

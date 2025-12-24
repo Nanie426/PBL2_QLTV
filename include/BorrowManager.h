@@ -55,6 +55,7 @@ private:
     vector<TransactionRecord> LoadAllTransactions();
     
 public:
+
     void HandleBorrowBook(UserManager& um, BookManager& bm);
     void HandleReturnBook(UserManager& um, BookManager& bm);
         

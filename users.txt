@@ -10,5 +10,5 @@
 2024,Y11122005,Nguyen Thi Nhu Y,11/12/2005,0368625867,ynehe@gmail.com
 2025,B12122012,Nguyen Van B,12/12/2012,0325312672,avan@gmail.com
 2026,Quynh19012006,Nguyen Thi Nhu Quynh,19/01/2006,0453672816,quynha@gmail.com
-2027,Ngƒn04022006,Nguy?n Th? Kim Ngƒn,04/02/2006,0944043457,Kngan2532@gmail.com
+2027,Ngann04022006,Nguyen Thi Kim Ngan,04/02/2006,0944043457,Kngan2532@gmail.com
 2028,Chau04012007,Nguyen Thi Chau,04/01/2007,0325641765,ngocchau@gmail.com

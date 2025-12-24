@@ -38,7 +38,21 @@ public:
     void ShowStockReport() const;
     void ShowStockReportPerBook() const;
     void LoadBooks();
+    void ShowAllBooksSortedByBorrowCount(bool descending);
+
+
     
+    // ===== SORTING INTERFACE =====
+    void SortBooksMenu();          // menu sắp xếp
+    void SortBooksByID(bool ascending);
+    void SortBooksByTitle(bool ascending);
+    void SortBooksByQuantity(bool ascending);
+    bool ChooseAscending();
+    void SortBooksByBorrowCount(bool descending);
+
+
+
+
     const Book* GetBookByID(int id) const; 
     Book* GetBookByID(int id);
 };

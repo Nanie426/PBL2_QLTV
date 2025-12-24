@@ -60,6 +60,7 @@ void StatisticsManager::BookStatistics() {
     int choice;
 
     do {
+        cout<<"\n";
         cout << Utils::CYAN << Utils::BOLD;
         Utils::PrintMenuBorder();
         Utils::PrintMenuHeader("THONG KE SACH");
@@ -88,7 +89,19 @@ void StatisticsManager::BookStatistics() {
         case 2: CategoryStatistics(); Utils::AskReturnToMenu(); break;
         case 3: AuthorStatistics(); Utils::AskReturnToMenu(); break;
         case 4: BorrowingStatusStatistics(); Utils::AskReturnToMenu(); break;
-        case 5: TopBorrowedBooksStatistics(); Utils::AskReturnToMenu(); break;
+        case 5: 
+        {
+            cout << "1. Giam dan\n";
+            cout << "2. Tang dan\n";
+            cout << "Chon: ";
+            int opt;
+            cin >> opt;
+            bool descending = (opt == 1);
+            bookManager.SortBooksByBorrowCount(descending);
+            bookManager.ShowAllBooks();
+            Utils::AskReturnToMenu();
+    break;
+        }
         case 0: cout << "Quay lai menu thong ke.\n"; break;
         default: cout << "Lua chon khong hop le!\n";
         }

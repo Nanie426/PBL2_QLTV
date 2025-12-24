@@ -79,3 +79,48 @@ Ten sach: Mua hoa sua
 Ngay muon: 23/12/2025
 ----------------------------------------
 
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 07:08:16
+ID nguoi dung: 2017
+Ten nguoi dung: Ngueyn Nguye
+ID sach: 133
+Ten sach: La nam trong la
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:44:52
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 140
+Ten sach: Nhat ky cua Ba
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:44:57
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 141
+Ten sach: Nhat ky cua Con
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:45:01
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 142
+Ten sach: Mua hoa sua
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:45:05
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 143
+Ten sach: Cuoc song cua toi
+Ngay muon: 24/12/2025
+----------------------------------------
+

@@ -4,6 +4,7 @@ int Book::getYear() const
 {
     return year;
 }
+
 // Book.h:57:6:
 void Book::setYear(int y)
 {

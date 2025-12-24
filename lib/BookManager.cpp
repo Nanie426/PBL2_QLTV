@@ -1,5 +1,8 @@
 #include "BookManager.h"
 #include "Utils.h"
+#include <algorithm>
+using namespace std;
+
 
 using namespace std;
 
@@ -179,7 +182,7 @@ void BookManager::ShowAllBooks() const
 
     cout << Utils::CYAN << Utils::BOLD;
     Utils::PrintMenuBorder(tableWidth);
-    Utils::PrintMenuHeader("DANH SACH TAT CA CAC SACH (" + to_string(bookCount) + " quyển)", tableWidth);
+    Utils::PrintMenuHeader("DANH SACH TAT CA CAC SACH (" + to_string(bookCount) + " quyen)", tableWidth);
     Utils::PrintMenuBorder(tableWidth);
     cout << Utils::RESET;
 
@@ -251,10 +254,10 @@ void BookManager::ShowStockReport() const
     Utils::PrintMenuBorder(WIDTH);
     cout << Utils::RESET;
 
-    Utils::PrintInfoRow("Tong So Dau Sach", to_string(bookCount), WIDTH);
-    Utils::PrintInfoRow("Tong So Ban Sao", to_string(totalCopies), WIDTH);
-    Utils::PrintInfoRow("Ban Sao Con Lai", to_string(availableCopies), WIDTH);
-    Utils::PrintInfoRow("Ban Sao Dang Muon", to_string(borrowedCopies), WIDTH);
+    Utils::PrintInfoRow("Tong So Dau Sach", to_string(bookCount), WIDTH+2);
+    Utils::PrintInfoRow("Tong So Ban Sao", to_string(totalCopies), WIDTH+2);
+    Utils::PrintInfoRow("Ban Sao Con Lai", to_string(availableCopies), WIDTH+2);
+    Utils::PrintInfoRow("Ban Sao Dang Muon", to_string(borrowedCopies), WIDTH+2);
 
     cout << Utils::CYAN << Utils::BOLD;
     Utils::PrintMenuBorder(WIDTH);
@@ -442,7 +445,6 @@ void BookManager::SearchBookByTitle() {
     const int QUANTITY_WIDTH = 10;
     const vector<int> columnWidths = {ID_WIDTH, TITLE_WIDTH, AUTHOR_WIDTH, CATEGORY_WIDTH, YEAR_WIDTH, QUANTITY_WIDTH};
 
-    // Tính tổng độ rộng của bảng (giống như PrintTableLine)
     int tableWidth = 0;
     for (int width : columnWidths) {
         tableWidth += width + 1;
@@ -667,4 +669,109 @@ void BookManager::UpdateBookByID(int id)
          << "Nhan Enter de quay lai..."
          << Utils::RESET;
     cin.get();
+ }
+void BookManager::SortBooksByID(bool ascending)
+{
+    sort(books, books + bookCount,
+        [ascending](const Book& a, const Book& b) {
+            return ascending ? a.getID() < b.getID()
+                             : a.getID() > b.getID();
+        });
+}
+
+void BookManager::SortBooksByTitle(bool ascending)
+{
+    sort(books, books + bookCount,
+        [ascending](const Book& a, const Book& b) {
+            return ascending ? strcmp(a.getTitle(), b.getTitle()) < 0
+                             : strcmp(a.getTitle(), b.getTitle()) > 0;
+        });
+}
+
+void BookManager::SortBooksByQuantity(bool ascending)
+{
+    sort(books, books + bookCount,
+        [ascending](const Book& a, const Book& b) {
+            return ascending ? a.getQuantity() < b.getQuantity()
+                             : a.getQuantity() > b.getQuantity();
+        });
+}
+void BookManager::SortBooksByBorrowCount(bool descending)
+{
+    sort(books, books + bookCount,
+        [descending](const Book& a, const Book& b)
+        {
+            int borrowedA = a.getTotalQuantity() - a.getQuantity();
+            int borrowedB = b.getTotalQuantity() - b.getQuantity();
+
+            return descending ? borrowedA > borrowedB
+                              : borrowedA < borrowedB;
+        });
+}
+
+void BookManager::SortBooksMenu()
+{
+    int choice;
+    bool ascending;
+
+    do {
+        cout << Utils::CYAN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("SAP XEP SACH", 59);
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+
+        cout << "1. Sap xep theo ID\n";
+        cout << "2. Sap xep theo Ten sach\n";
+        cout << "3. Sap xep theo So luong\n";
+        cout << "4. Thoat\n";
+        cout << Utils::CYAN << "Chon phuong thuc sap xep (1-4): " << Utils::RESET;
+
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = -1;
+        }
+
+        switch (choice) {
+        case 1:
+            ascending = ChooseAscending();
+            SortBooksByID(ascending);
+            ShowAllBooks();
+            break;
+
+        case 2:
+            ascending = ChooseAscending();
+            SortBooksByTitle(ascending);
+            ShowAllBooks();
+            break;
+
+        case 3:
+            ascending = ChooseAscending();
+            SortBooksByQuantity(ascending);
+            ShowAllBooks();
+            break;
+
+        case 4:
+            cout << "Thoat khoi menu sap xep.\n";
+            break;
+
+        default:
+            cout << Utils::RED
+                 << "Lua chon khong hop le. Vui long chon lai."
+                 << Utils::RESET << "\n";
+        }
+
+    } while (choice != 4);
+}
+
+
+bool BookManager::ChooseAscending()
+{
+    int opt;
+    cout << "   1. Tang dan\n";
+    cout << "   2. Giam dan\n";
+    cout << "   Chon: ";
+    cin >> opt;
+    return (opt == 1);
 }

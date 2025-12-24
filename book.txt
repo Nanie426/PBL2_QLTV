@@ -1,4 +1,4 @@
-id,name,author,category,publish,quantity,status
+0,name,author,category,0,0,0
 124,Mat biec,Nguyen Nhat Anh,truyen,1990,2,0
 125,Toi thay hoa vang tren co xanh,Nguyen Nhat Anh,truyen,2010,1,0
 126,Co gai den tu hom qua,Nguyen Nhat Anh,truyen,1989,0,0
@@ -13,6 +13,7 @@ id,name,author,category,publish,quantity,status
 138,Mua lac,Duong Thu Huong,tieu thuyet,1992,0,0
 139,Nhat ky cua Chau,Chau,Nhat ky,1975,2,0
 140,Nhat ky cua Chau,Ngoc Chau,Tieu thuyet,2006,17,0
-141,Nhat ky cua me,Hien Thuc,Nhat ky,2005,15,0
+141,Nhat ky cua me,Ho Chi Minh,Nhat ky,1990,15,0
 142,Mua hoa sua,Nguyen Nhat Anh,Truyen dai,2020,12,0
 143,Cuoc song cua toi,Nguyen Nha,Tieu thuyet,2006,21,0
+144,Tuoi hong,hadlahd,Tieu thuyet,2011,3,0

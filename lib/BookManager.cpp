@@ -130,7 +130,7 @@ void BookManager::AddBook()
     {
         cout << Utils::GREEN << Utils::BOLD;
         Utils::PrintMenuBorder();
-        Utils::PrintMenuHeader("ADD NEW BOOK");
+        Utils::PrintMenuHeader("THEM SACH MOI");
         Utils::PrintMenuBorder();
         cout << Utils::RESET;
 
@@ -139,7 +139,6 @@ void BookManager::AddBook()
 
         cout << Utils::CYAN << "ID sach: " << Utils::YELLOW << newIDStr << Utils::RESET << "\n\n";
 
-        // Set ID and get information from user
         books[bookCount].setID(id);
         books[bookCount].InputBook();
         books[bookCount].setBorrowed(false);

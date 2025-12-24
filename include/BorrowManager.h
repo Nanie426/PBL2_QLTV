@@ -70,5 +70,11 @@ public:
     }
     void ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager);
     void ShowActiveAndOverdueBorrows(UserManager& userManager, BookManager& bookManager);
+    void StatisticsBorrowByMonth(
+    int month,
+    int year,
+    BookManager& bookManager
+    );
+
     
 };

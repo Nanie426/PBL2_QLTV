@@ -707,3 +707,113 @@ void BorrowManager::ShowBorrowRecords()
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin.get();
 }
+void BorrowManager::StatisticsBorrowByMonth(
+    int month, int year, BookManager& bookManager)
+{
+    ifstream in("BorrowRecords.txt");
+    if (!in.is_open()) {
+        cout << Utils::RED << "Khong mo duoc file BorrowRecords.txt\n"
+             << Utils::RESET;
+        return;
+    }
+
+    struct BorrowStat {
+        int bookID;
+        int count;
+    };
+
+    BorrowStat stats[200];
+    int statCount = 0;
+
+    string line;
+    int currentBookID = -1;
+    int d, m, y;
+
+    while (getline(in, line)) {
+
+        // Lấy ID sách
+        if (line.find("ID sach:") != string::npos) {
+            currentBookID = stoi(line.substr(line.find(":") + 1));
+        }
+
+        // Lấy ngày mượn
+        if (line.find("Ngay muon:") != string::npos) {
+            sscanf(line.c_str(), "Ngay muon: %d/%d/%d", &d, &m, &y);
+
+            if (m == month && y == year && currentBookID != -1) {
+                bool found = false;
+                for (int i = 0; i < statCount; i++) {
+                    if (stats[i].bookID == currentBookID) {
+                        stats[i].count++;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    stats[statCount].bookID = currentBookID;
+                    stats[statCount].count = 1;
+                    statCount++;
+                }
+            }
+        }
+    }
+
+    in.close();
+
+    if (statCount == 0) {
+        cout << Utils::YELLOW
+             << "Khong co giao dich muon sach trong thang "
+             << month << "/" << year << ".\n"
+             << Utils::RESET;
+        return;
+    }
+
+    // ===== SORT GIẢM DẦN THEO SỐ LƯỢT MƯỢN =====
+    for (int i = 0; i < statCount - 1; i++) {
+        for (int j = i + 1; j < statCount; j++) {
+            if (stats[i].count < stats[j].count) {
+                BorrowStat tmp = stats[i];
+                stats[i] = stats[j];
+                stats[j] = tmp;
+            }
+        }
+    }
+
+    // ===== IN BẢNG =====
+    const int ID_WIDTH = 8;
+    const int TITLE_WIDTH = 30;
+    const int COUNT_WIDTH = 12;
+
+    vector<int> col = {ID_WIDTH, TITLE_WIDTH, COUNT_WIDTH};
+    int tableWidth = ID_WIDTH + TITLE_WIDTH + COUNT_WIDTH + 2;
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(tableWidth);
+    Utils::PrintMenuHeader(
+        "THONG KE MUON SACH THANG " +
+        to_string(month) + "/" + to_string(year),
+        tableWidth);
+    Utils::PrintMenuBorder(tableWidth);
+    cout << Utils::RESET;
+
+    cout << Utils::YELLOW << Utils::BOLD
+         << left << setw(ID_WIDTH) << "ID" << " "
+         << left << setw(TITLE_WIDTH) << "Ten sach" << " "
+         << left << setw(COUNT_WIDTH) << "So luot muon"
+         << Utils::RESET << endl;
+
+    Utils::PrintTableLine(col);
+
+    for (int i = 0; i < statCount; i++) {
+        Book* book = bookManager.GetBookByID(stats[i].bookID);
+        if (!book) continue;
+
+        cout << left << setw(ID_WIDTH) << book->getID() << " "
+             << left << setw(TITLE_WIDTH) << book->getTitle() << " "
+             << left << setw(COUNT_WIDTH) << stats[i].count
+             << endl;
+    }
+
+    Utils::PrintTableLine(col);
+}
+

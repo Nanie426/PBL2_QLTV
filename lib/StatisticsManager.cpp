@@ -589,6 +589,7 @@ void StatisticsManager::BorrowingReturnStatistics() {
     Utils::PrintMenuLine("2. Lich su muon sach");
     Utils::PrintMenuLine("3. Lich su tra sach");
     Utils::PrintMenuLine("4. Giao dich tat ca doc gia");
+    Utils::PrintMenuLine("5. Thong ke sach muon theo thang");
     Utils::PrintMenuLine("0. Quay lai");
     Utils::PrintMenuBorder(WIDTH);
     cout << Utils::RESET;
@@ -608,6 +609,17 @@ void StatisticsManager::BorrowingReturnStatistics() {
     case 4:
         borrowManager.ShowAllUsersTransactionHistory(userManager, bookManager);
         break;
+    case 5:{
+        int month, year;
+        cout << "Nhap thang (1-12): ";
+        cin >> month;
+        cout << "Nhap nam: ";
+        cin >> year;
+
+        borrowManager.StatisticsBorrowByMonth(month, year, bookManager);
+        Utils::AskReturnToMenu();
+        break;
+    }
     case 0:
         cout << "Quay lai menu thong ke...\n";
         break;

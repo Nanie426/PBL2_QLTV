@@ -1,14 +1,14 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "UserManager.h"
 #include "BookManager.h"
 #include "BorrowManager.h" 
 #include "StatisticsManager.h"
 #include "Utils.h"
 #include "User.h"
-#include <iomanip> 
-#include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -24,9 +24,9 @@ private:
     void UserMenu();
     void BookMenu();
     void BorrowBookMenu();
-    void StatisticsMenu(); // THÊM MENU THỐNG KÊ
+    void StatisticsMenu(); 
 
 public:
-    Admin(); // THÊM CONSTRUCTOR
+    Admin(); 
     void Menu();
 };

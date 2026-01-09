@@ -22,7 +22,6 @@ public:
     BorrowedItem(int id, const string& bDate, const string& rDate, bool returned)
         : bookID(id), borrowDate(bDate), returnDate(rDate), isReturned(returned) {}
 
-    // FIXED: Trả về string thay vì const char*
     int getBookID() const { return bookID; }
     string getBorrowDate() const { return borrowDate; }
     string getReturnDate() const { return returnDate; }

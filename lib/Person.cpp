@@ -1,4 +1,6 @@
 #include "Person.h"
+#include "Utils.h"
+#include <limits>
 
 // Lấy họ (từ cuối)
 string Person::getLastName() const {
@@ -16,37 +18,36 @@ string Person::getLastName() const {
 void Person::InputUserDetails()
 {
     char tempStr[100];
-    cout << "------------------------------------------\n";
 
     do {
-        cout << "Nhap Ten doc gia (VD: Nguyen Van A): ";
+        cout << Utils::WHITE << "Ho ten: " << Utils::RESET;
         cin.getline(tempStr, sizeof(tempStr));
-        if (strlen(tempStr) == 0) cout << "Ten khong duoc de trong.\n";
+        if (strlen(tempStr) == 0) cout << Utils::RED << "Ten khong duoc de trong." << Utils::RESET << "\n";
     } while (strlen(tempStr) == 0);
     setName(tempStr);
 
     do {
-        cout << "Nhap Ngay sinh (DD/MM/YYYY): ";
+        cout << Utils::WHITE << "Ngay sinh (DD/MM/YYYY): " << Utils::RESET;
         cin.getline(tempStr, sizeof(tempStr));
-        if (strlen(tempStr) == 0) cout << "Ngay sinh khong duoc de trong.\n";
+        if (strlen(tempStr) == 0) cout << Utils::RED << "Ngay sinh khong duoc de trong." << Utils::RESET << "\n";
     } while (strlen(tempStr) == 0);
     setDate(tempStr);
 
     do {
-        cout << "Nhap So dien thoai: ";
+        cout << Utils::WHITE << "So Dien Thoai: " << Utils::RESET;
         cin.getline(tempStr, sizeof(tempStr));
-        if (strlen(tempStr) == 0) cout << "So dien thoai khong duoc de trong.\n";
+        if (strlen(tempStr) == 0) cout << Utils::RED << "So dien thoai khong duoc de trong." << Utils::RESET << "\n";
     } while (strlen(tempStr) == 0);
     setPhone(tempStr);
 
     do {
-        cout << "Nhap Email: ";
+        cout << Utils::WHITE << "Email: " << Utils::RESET;
         cin.getline(tempStr, sizeof(tempStr));
-        if (strlen(tempStr) == 0) cout << "Email khong duoc de trong.\n";
+        if (strlen(tempStr) == 0) cout << Utils::RED << "Email khong duoc de trong." << Utils::RESET << "\n";
     } while (strlen(tempStr) == 0);
     setEmail(tempStr);
 
-    cout << "------------------------------------------\n";
+    cout << "\n";
 }
 
 void Person::CopyStringManual(char* dest, const char* src, size_t dest_size)
@@ -163,12 +164,21 @@ void Person::InputAccountDetails()
 
 void Person::Show() const
 {
-    cout << "--- Thong tin ca nhan ---\n";
-    cout << "ID: " << ID << "\n";
-    cout << "Ho Ten: " << name << "\n";
-    cout << "Ngay Sinh: " << date << "\n";
-    cout << "So dien Thoai: " << phone << "\n";
-    cout << "Email: " << email << "\n";
+    const int WIDTH = 59;
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    Utils::PrintMenuHeader("THONG TIN CA NHAN", WIDTH);
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
+    Utils::PrintInfoRow("ID", to_string(ID), WIDTH+2);
+    Utils::PrintInfoRow("Ho Ten", name, WIDTH+2);
+    Utils::PrintInfoRow("Ngay Sinh", date, WIDTH+2);
+    Utils::PrintInfoRow("So Dien Thoai", phone, WIDTH+2);
+    Utils::PrintInfoRow("Email", email, WIDTH+2);
+
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
 }
 
 ostream& operator<<(ostream& out, const Person& p)
@@ -209,8 +219,14 @@ istream& operator>>(istream& in, Person& p)
 bool Person::ChangePassword()
 {
     char oldPw[50], new1[50], new2[50];
+    const int WIDTH = 59;
 
-    cout << "Nhap Mat Khau cu: ";
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    Utils::PrintMenuHeader("THAY DOI MAT KHAU", WIDTH);
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
+    cout << Utils::YELLOW << "Nhap Mat khau cu: " << Utils::RESET;
     cin.getline(oldPw, sizeof(oldPw));
 
     if (CompareStringManual(oldPw, password) != 0) {
@@ -220,16 +236,17 @@ bool Person::ChangePassword()
 
     while (true)
     {
-        cout << "Nhap Mat Khau moi: ";
+
+        cout << Utils::CYAN << "Nhap Mat khau moi: " << Utils::RESET;
         cin.getline(new1, sizeof(new1));
 
-        cout << "Nhap lai Mat Khau moi: ";
+        cout << Utils::CYAN << "Nhap lai Mat khau moi: " << Utils::RESET;
         cin.getline(new2, sizeof(new2));
 
         if (CompareStringManual(new1, new2) == 0)
         {
             setPassword(new1);
-            cout << "Thay doi mat khau thanh cong!\n";
+            cout << Utils::GREEN << "Thay doi mat khau thanh cong!\n" << Utils::RESET;
 
             ifstream in("users.txt");
             ofstream out("temp.txt");
@@ -265,17 +282,28 @@ bool Person::ChangePassword()
 
             return true;
         }
-        else cout << "Mat khau moi khong khop!\n";
+        else cout << Utils::RED << "Mat khau moi khong khop!\n" << Utils::RESET;
     }
 }
 
 void Person::Update()
 {
     char input[100];
+    char choice;
 
     cout << "\n--- CAP NHAT THONG TIN CA NHAN ---\n";
 
-    ChangePassword();
+    cout << "Ban co muon thay doi mat khau? (Y/N): ";
+    cin >> choice;
+    cin.ignore(100, '\n'); // Clear the input buffer
+
+    if (choice == 'Y' || choice == 'y') {
+        if (!ChangePassword()) {
+            cout << "Khong the thay doi mat khau. Tiep tuc cap nhat thong tin khac.\n";
+        }
+    } else {
+        cout << "Khong thay doi mat khau!\n";
+    }
 
     cout << "Ten hien tai: " << name << "\nNhap Ten moi: ";
     cin.getline(input, sizeof(input));
@@ -300,25 +328,50 @@ void Person::Update()
 void Person::UpdateByUser()
 {
     char input[100];
+    const int WIDTH = 60;
 
-    cout << "\n--- CAP NHAT THONG TIN ---\n";
+    cout << Utils::CYAN << Utils::BOLD;
+    Utils::PrintMenuBorder(WIDTH);
+    Utils::PrintMenuHeader("CAP NHAT THONG TIN CA NHAN", WIDTH);
+    Utils::PrintMenuBorder(WIDTH);
+    cout << Utils::RESET;
 
-    cout << "Ten hien tai: " << name << "\nNhap Ten moi: ";
+    // ===== TEN =====
+    cout << Utils::YELLOW << "Ten hien tai: " << name << Utils::RESET;
+    cout << Utils::CYAN << "\nNhap ten moi (Enter de bo qua): " << Utils::RESET;
+    
+    //cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin.getline(input, sizeof(input));
-    if (input[0] != '\0') setName(input);
+    if (input[0] != '\0')
+        setName(input);
 
-    cout << "Ngay sinh hien tai: " << date << "\nNhap Ngay sinh moi: ";
+
+    // ===== NGAY SINH =====
+    cout << Utils::YELLOW << "Ngay sinh hien tai: " << date << Utils::RESET<<"\n";
+    cout << Utils::CYAN << "Nhap ngay sinh moi (DD/MM/YYYY): " << Utils::RESET;
     cin.getline(input, sizeof(input));
-    if (input[0] != '\0') setDate(input);
+    if (input[0] != '\0')
+        setDate(input);
 
-    cout << "SDT hien tai: " << phone << "\nNhap SDT moi: ";
+
+    cout << Utils::YELLOW << "SDT hien tai: " << phone << Utils::RESET<<"\n";
+    cout << Utils::CYAN << "Nhap SDT moi: " << Utils::RESET;
     cin.getline(input, sizeof(input));
-    if (input[0] != '\0') setPhone(input);
+    if (input[0] != '\0')
+        setPhone(input);
 
-    cout << "Email hien tai: " << email << "\nNhap Email moi: ";
+
+    // ===== EMAIL =====
+    cout << Utils::YELLOW << "Email hien tai: " << email << Utils::RESET<<"\n";
+    cout << Utils::CYAN << "Nhap email moi: " << Utils::RESET;
     cin.getline(input, sizeof(input));
-    if (input[0] != '\0') setEmail(input);
+    if (input[0] != '\0')
+        setEmail(input);
 
-    cout << "\nCap nhat thanh cong!\n";
+
+    cout << Utils::GREEN << Utils::BOLD
+         << "CAP NHAT THONG TIN THANH CONG!"
+         << Utils::RESET << "\n";
+    cin.get();
     Show();
 }

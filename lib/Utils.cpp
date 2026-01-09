@@ -2,6 +2,8 @@
 #include <ctime>
 #include <iostream>
 #include <cstdio>
+#include <string>
+#include <iomanip>
 
 using namespace std;
 
@@ -10,10 +12,23 @@ const int Utils::daysInMonth[13] = {
     31, 31, 30, 31, 30, 31
 };
 
+// ANSI Color Code Definitions
+const string Utils::RESET = "\033[0m";
+const string Utils::RED = "\033[31m";
+const string Utils::GREEN = "\033[32m";
+const string Utils::YELLOW = "\033[33m";
+const string Utils::BLUE = "\033[34m";
+const string Utils::MAGENTA = "\033[35m";
+const string Utils::CYAN = "\033[36m";
+const string Utils::WHITE = "\033[37m";
+const string Utils::BLACK = "\033[30m";
+const string Utils::BOLD = "\033[1m";
+
+const int MAX_STREAM_SIZE_MANUAL = 100;
 bool Utils::AskReturnToMenu()
 {
     char choiceInput[10];
-    cout << "\nBan co muon quay lai MENU khong? (Y/N): ";
+    cout << Utils::CYAN << "\nBan co muon quay ve menu? (Y/N): " << Utils::RESET;
 
     if (cin.getline(choiceInput, sizeof(choiceInput)).fail()) {
         cin.clear();
@@ -167,13 +182,6 @@ void Utils::GetCurrentDateManual(char* buffer, size_t buffer_size)
     CopyStringManual(buffer, "19/11/2025", buffer_size);
 }
 
-int Utils::CalculateDateDifference(const char* date1, const char* date2)
-{
-    long long d1 = GetTotalDays(date1);
-    long long d2 = GetTotalDays(date2);
-    return (int)(d1 - d2);
-}
-
 int Utils::CompareDates(const char* date1, const char* date2)
 {
     int y1 = CharArrayToIntManual(date1 + 6);
@@ -254,10 +262,80 @@ int Utils::CompareDates(const tm& date1, const tm& date2)
     return 0;
 }
 
+long long Utils::GetTotalDays(const char* date) {
+    int d = CharArrayToIntManual(date);
+    int m = CharArrayToIntManual(date + 3);
+    int y = CharArrayToIntManual(date + 6);
+    long long days = (long long)y * 365 + y / 4 - y / 100 + y / 400 + (m - 1) * 30 + d;
+    return days;
+}
+
 string Utils::GeneratePassword(const string& lastName, const string& dob)
 {
     string cleanDOB = "";
     for (char c : dob) if (c != '/') cleanDOB += c;
 
     return lastName + cleanDOB;
+}
+
+void Utils::PrintMenuBorder(int width)
+{
+    cout << "+";
+    for (int i = 0; i < width; ++i) cout << "=";
+    cout << "+" << endl;
+}
+
+void Utils::PrintMenuHeader(const string& title, int width)
+{
+    cout << "|";
+    int padding = (width - title.length()) / 2;
+    for (int i = 0; i < padding; ++i) cout << " ";
+    cout << title;
+    for (int i = 0; i < width - padding - title.length(); ++i) cout << " ";
+    cout << "|" << endl;
+}
+
+void Utils::PrintMenuLine(const string& text, int width)
+{
+    cout << "| " << text;
+    int spaces = width - 1 - text.length(); 
+    for (int i = 0; i < spaces; ++i) cout << " ";
+    cout << "|" << endl;
+}
+
+void Utils::PrintTableLine(const vector<int>& columnWidths)
+{
+    int totalWidth = 0;
+    for (int width : columnWidths) {
+        totalWidth += width + 1; 
+    }
+    totalWidth -= 1; 
+    
+    cout << CYAN << setfill('-') << setw(totalWidth) << "" << setfill(' ') << RESET << endl;
+}
+
+int Utils::GetVisibleLength(const string& str) {
+    int length = 0;
+    bool inEscape = false;
+    for (char c : str) {
+        if (c == '\033') { 
+            inEscape = true;
+        } else if (inEscape && c == 'm') { 
+            inEscape = false;
+        } else if (!inEscape) {
+            length++;
+        }
+    }
+    return length;
+}
+
+void Utils::PrintInfoRow(const string& label, const string& value, int totalWidth)
+{
+    cout << CYAN << "| " << YELLOW << label << ": " << RESET << value;
+    int visibleUsedSpace = 1 + 1 + GetVisibleLength(label) + 1 + 1 + GetVisibleLength(value);
+    int spacesNeeded = totalWidth - 1 - visibleUsedSpace;
+    if (spacesNeeded > 0) {
+        cout << string(spacesNeeded, ' ');
+    }
+    cout << CYAN << "|" << RESET << endl;
 }

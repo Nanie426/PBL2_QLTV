@@ -1,27 +1,216 @@
 === THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 29/11/2025 15:01:04
-ID nguoi dung: 2012
-Ten nguoi dung: Le Minh Hoang
-ID sach: 139
-Ten sach: Nhat ky cua Chau
-Ngay muon: 29/11/2025
+Thoi gian ghi nhan: 15/11/2025 09:20:10
+ID nguoi dung: 2018
+Ten nguoi dung: Le Minh Khoa
+ID sach: 124
+Ten sach: Mat biec
+Ngay muon: 15/11/2025
 ----------------------------------------
 
 === THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 29/11/2025 15:19:41
-ID nguoi dung: 2014
-Ten nguoi dung: Tran Anh Tuan
-ID sach: 139
-Ten sach: Nhat ky cua Chau
-Ngay muon: 29/11/2025
+Thoi gian ghi nhan: 18/11/2025 14:35:42
+ID nguoi dung: 2019
+Ten nguoi dung: Pham Thi Lan
+ID sach: 129
+Ten sach: Thang quy nho
+Ngay muon: 18/11/2025
 ----------------------------------------
 
 === THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 29/11/2025 15:20:51
-ID nguoi dung: 2015
-Ten nguoi dung: Vo Kim Anh
+Thoi gian ghi nhan: 20/11/2025 16:10:05
+ID nguoi dung: 2021
+Ten nguoi dung: Nguyen Duc Long
+ID sach: 133
+Ten sach: La nam trong la
+Ngay muon: 20/11/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 12/12/2024 10:05:30
+ID nguoi dung: 2009
+Ten nguoi dung: Tran Hoai Nam
+ID sach: 135
+Ten sach: De men phieu luu ky
+Ngay muon: 12/12/2024
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 14/12/2024 15:42:18
+ID nguoi dung: 2010
+Ten nguoi dung: Nguyen Thi Thu
 ID sach: 138
 Ten sach: Mua lac
-Ngay muon: 29/11/2025
+Ngay muon: 14/12/2024
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 21/12/2024 09:30:44
+ID nguoi dung: 2011
+Ten nguoi dung: Do Van Hung
+ID sach: 141
+Ten sach: Nhat ky cua me
+Ngay muon: 21/12/2024
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 05/11/2024 08:15:00
+ID nguoi dung: 2005
+Ten nguoi dung: Phan Thi Hoa
+ID sach: 125
+Ten sach: Toi thay hoa vang tren co xanh
+Ngay muon: 05/11/2024
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 09/11/2024 13:50:26
+ID nguoi dung: 2006
+Ten nguoi dung: Nguyen Van Son
+ID sach: 130
+Ten sach: Quan go di len
+Ngay muon: 09/11/2024
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 18/11/2024 17:22:11
+ID nguoi dung: 2007
+Ten nguoi dung: Le Thi Mai
+ID sach: 132
+Ten sach: Cho xin mot ve di tuoi tho
+Ngay muon: 18/11/2024
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 25/11/2024 19:05:55
+ID nguoi dung: 2008
+Ten nguoi dung: Nguyen Quoc Bao
+ID sach: 139
+Ten sach: Nhat ky cua Chau
+Ngay muon: 25/11/2024
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 09:47:50
+ID nguoi dung: 2014
+Ten nguoi dung: Tran Anh Tuan
+ID sach: 134
+Ten sach: So do
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 10:04:52
+ID nguoi dung: 2015
+Ten nguoi dung: Vo Kim Anh
+ID sach: 136
+Ten sach: Hai dua tre
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:40:24
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 141
+Ten sach: Nhat ky cua me
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:42:19
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 138
+Ten sach: Mua lac
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:42:41
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 125
+Ten sach: Toi thay hoa vang tren co xanh
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:44:11
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 140
+Ten sach: Nhat ky cua Chau
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:48:00
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 133
+Ten sach: La nam trong la
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:48:10
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 135
+Ten sach: De men phieu luu ky
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:53:24
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 142
+Ten sach: Mua hoa sua
+Ngay muon: 23/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 07:08:16
+ID nguoi dung: 2017
+Ten nguoi dung: Ngueyn Nguye
+ID sach: 133
+Ten sach: La nam trong la
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:44:52
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 140
+Ten sach: Nhat ky cua Ba
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:44:57
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 141
+Ten sach: Nhat ky cua Con
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:45:01
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 142
+Ten sach: Mua hoa sua
+Ngay muon: 24/12/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:45:05
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 143
+Ten sach: Cuoc song cua toi
+Ngay muon: 24/12/2025
 ----------------------------------------
 

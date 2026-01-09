@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iomanip>
 #include <limits>
+#include <cctype>
 #include "BorrowManager.h"
 #include "UserManager.h"
 #include "BookManager.h"
@@ -28,6 +29,18 @@ struct BorrowRecordData
     string timeStamp;
 };
 
+struct TransactionRecord
+{
+    int userID;
+    string userName;
+    int bookID;
+    string bookTitle;
+    string borrowDate;
+    string returnDate;
+    bool isReturned;
+    string timeStamp;
+};
+
 class BorrowManager
 {
 private:
@@ -39,7 +52,10 @@ private:
                          int bookID, const string &bookTitle,
                          const string &returnDate);
     
+    vector<TransactionRecord> LoadAllTransactions();
+    
 public:
+
     void HandleBorrowBook(UserManager& um, BookManager& bm);
     void HandleReturnBook(UserManager& um, BookManager& bm);
         
@@ -54,5 +70,11 @@ public:
     }
     void ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager);
     void ShowActiveAndOverdueBorrows(UserManager& userManager, BookManager& bookManager);
+    void StatisticsBorrowByMonth(
+    int month,
+    int year,
+    BookManager& bookManager
+    );
+
     
 };

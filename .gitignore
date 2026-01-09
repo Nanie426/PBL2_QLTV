@@ -1,0 +1,7 @@
+# Tệp biên dịch và thực thi
+*.o
+main
+main.exe
+
+# Lịch sử người dùng
+user_history_*.txt

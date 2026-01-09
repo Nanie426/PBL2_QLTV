@@ -1,4 +1,5 @@
-#include "login.h"
+#include "Login.h"
+#include "Utils.h"
 
 
 
@@ -30,10 +31,13 @@ bool Login::DangNhap(const string& inputID, const string& inputPassword, const s
     if (!file.is_open()) return false;
 
     string line;
-    getline(file, line);
+    if (filename == "admin.txt") getline(file, line); 
 
     while (getline(file, line))
-    {
+    {        
+        if (line.size() >= 3 && (unsigned char)line[0] == 0xEF && (unsigned char)line[1] == 0xBB && (unsigned char)line[2] == 0xBF) {
+            line = line.substr(3);
+        }
         stringstream ss(line);
         string segment;
         string fields[2];
@@ -63,11 +67,18 @@ void Login::ShowStartMenu()
     string roleChoice;
 
     do {
-        cout << "\n========= HE THONG QUAN LY THU VIEN =========\n";
-        cout << "1. Dang Nhap voi tu cach ADMIN\n";
-        cout << "2. Dang Nhap voi tu cach DOC GIA\n";
-        cout << "0. Thoat\n";
-        cout << "Chon: ";
+        cout << Utils::CYAN << Utils::BOLD;
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuHeader("HE THONG QUAN LY THU VIEN");
+        Utils::PrintMenuBorder();
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuLine("1. DANG NHAP VOI VAI TRO ADMIN");
+        Utils::PrintMenuLine("2. DANG NHAP VOI VAI TRO READER");
+        Utils::PrintMenuLine("0. Thoat");
+        Utils::PrintMenuLine("");
+        Utils::PrintMenuBorder();
+        cout << Utils::RESET;
+        cout << Utils::CYAN << "Chon: " << Utils::RESET;
 
         if (!(cin >> choice)) {
             cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); choice = -1;
@@ -81,18 +92,22 @@ void Login::ShowStartMenu()
             bool loggedIn = false;
 
             while (!loggedIn) {
-                cout << "\n--- DANG NHAP (" << roleChoice << ") ---\n";
-                cout << "Nhap ID: "; getline(cin, id);
-                if (id == "0" || id == "exit") break;
-                cout << "Mat Khau: "; getline(cin, password);
-                if (password == "0" || password == "exit") break;
+                cout << Utils::CYAN << Utils::BOLD;
+                Utils::PrintMenuBorder();
+                Utils::PrintMenuHeader("DANG NHAP VOI VAI TRO " + string(choice == 1 ? "ADMIN" : "READER"));
+                Utils::PrintMenuBorder();
+                cout << Utils::RESET;
+                cout << Utils::CYAN << "ID: " << Utils::RESET; getline(cin, id);
+                if (id == "0" || id == "Thoat") break;
+                cout << Utils::CYAN << "Password: " << Utils::RESET; getline(cin, password);
+                if (password == "0" || password == "Thoat") break;
 
                 id = Trim(id);
                 password = Trim(password);
 
                 if (DangNhap(id, password, roleChoice, role))
                 {
-                    cout << "\nDang nhap thanh cong! Vai tro: " << role << ".\n";
+                    cout << Utils::GREEN << Utils::BOLD << "\nDang nhap thanh cong! Vai tro: " << role << "\n" << Utils::RESET;
                     loggedIn = true;
 
                     if (CompareString(role, "admin") == 0)
@@ -107,14 +122,14 @@ void Login::ShowStartMenu()
                         userTask.Menu(this->userManager, this->bookManager);
                     }
                 }
-                else cout << "ID hoac mat khau khong dung! Vui long nhap lai.\n";
+                else cout << Utils::RED << "ID hoac mat khau khong dung! Vui long thu lai.\n" << Utils::RESET;
             }
         }
         else if (choice == 0)
         {
-            cout << "Tam biet.\n";
+            cout << Utils::YELLOW << "Tam biet! Cam on ban da su dung he thong quan ly thu vien.\n" << Utils::RESET;
         }
-        else cout << "Lua chon khong hop le!\n";
+        else cout << Utils::RED << "Lua chon khong hop le! Vui long chon mot lua chon hop le.\n" << Utils::RESET;
 
     } while (choice != 0);
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "UserManager.h"
 #include "BookManager.h"
 #include "BorrowManager.h"
@@ -15,16 +16,16 @@ public:
 
     void ShowStatisticsMenu();
 
-    void ThongKeSach();
-    void ThongKeTongQuanSach();
-    void ThongKeTheoTheLoai();
-    void ThongKeTheoTacGia();
-    void ThongKeTinhTrangMuon();
-    void ThongKeSachMuonNhieu();
+    void BookStatistics();
+    void OverallBookStatistics();
+    void CategoryStatistics();
+    void AuthorStatistics();
+    void BorrowingStatusStatistics();
+    void TopBorrowedBooksStatistics();
 
-    void ThongKeDocGia();
+    void ReaderStatistics();
 
-    void ThongKeMuonTra();
+    void BorrowingReturnStatistics();
 
-    void BaoCaoTongHop();
+    void ComprehensiveReport();
 };

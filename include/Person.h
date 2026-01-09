@@ -12,7 +12,7 @@ private:
     int ID;
     char name[100];
     char date[11];
-    char phone[11];
+    char phone[16];
     char email[100];
     char password[50];
 

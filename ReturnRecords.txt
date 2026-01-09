@@ -1,0 +1,54 @@
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:43:15
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 141
+Ten sach: Nhat ky cua me
+Ngay tra: 23/12/2025
+----------------------------------------
+
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:49:28
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 133
+Ten sach: La nam trong la
+Ngay tra: 23/12/2025
+----------------------------------------
+
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 23/12/2025 16:53:39
+ID nguoi dung: 2016
+Ten nguoi dung: Ngoc Mai
+ID sach: 142
+Ten sach: Mua hoa sua
+Ngay tra: 23/12/2025
+----------------------------------------
+
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 24/12/2025 07:08:56
+ID nguoi dung: 2017
+Ten nguoi dung: Ngueyn Nguye
+ID sach: 133
+Ten sach: La nam trong la
+Ngay tra: 24/12/2025
+----------------------------------------
+
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:45:17
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 143
+Ten sach: Cuoc song cua toi
+Ngay tra: 24/12/2025
+----------------------------------------
+
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 24/12/2025 08:45:24
+ID nguoi dung: 2020
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 142
+Ten sach: Mua hoa sua
+Ngay tra: 24/12/2025
+----------------------------------------
+
